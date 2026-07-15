@@ -26,7 +26,7 @@ The project combines a lightweight Node.js backend, Python runtime, Android (Ter
 
 1. Clone and install
 
-    git clone https://github.com/YOUR_USERNAME/arcsi-runtime
+    git clone https://github.com/istju/arcsi-runtime
     cd arcsi-runtime
     npm install
 
@@ -198,7 +198,7 @@ Requirements:
 
 Installation:
 
-git clone https://github.com/YOUR_USERNAME/arcsi-runtime cd arcsi-runtime cp .env.example .env npm install python3 -m runtime.server & node serverem.js
+git clone https://github.com/istju/arcsi-runtime cd arcsi-runtime cp .env.example .env npm install python3 -m runtime.server & node serverem.js
 
 ---
 
