@@ -1,0 +1,36 @@
+# Függőségek
+node_modules/
+
+# Érzékeny adatok
+.env
+gmail_token.json
+credentials.json
+*.token.json
+
+# Logok és runtime adatok
+chat_logs/
+*.log
+*.pid
+server_startup.log
+
+# Projektek (személyes adatok)
+projects/my_projects/*/context.json
+projects/my_projects/*/event_log.json
+projects/my_projects/*/tool_log.json
+projects/my_projects/*/versions/
+projects/my_projects/*/work_log.json
+
+# Sandbox
+sandbox/
+
+# Backup fájlok
+*.bak
+*.corrupted
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS fájlok
+.DS_Store
+Thumbs.db

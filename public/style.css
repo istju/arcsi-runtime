@@ -1,0 +1,303 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.provider {
+  font-size: 0.8rem;
+  color: #22c55e;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#chat {
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid #1f2937;
+  padding: 10px;
+  min-height: 300px;
+  max-height: 65vh;
+  overflow-y: auto;
+  font-size: 0.95rem;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message .role {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.message.user .role {
+  color: #22c55e;
+}
+
+.message.assistant .role {
+  color: #60a5fa;
+}
+
+.message .content {
+  background: #020617;
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid #111827;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message.user .content {
+  border-color: #064e3b;
+}
+
+.message.assistant .content {
+  border-color: #1d4ed8;
+}
+
+.message img {
+  max-width: 220px;
+  border-radius: 8px;
+  margin-top: 6px;
+  border: 1px solid #1f2937;
+}
+
+#error {
+  color: #f97373;
+}
+
+#inputArea {
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid #1f2937;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#prompt {
+  width: 100%;
+  min-height: 70px;
+  max-height: 160px;
+  resize: vertical;
+  background: #020617;
+  color: #e5e7eb;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  padding: 8px;
+  font-size: 0.95rem;
+}
+
+.btn-row-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+
+.bottom-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#send {
+    width: 100%;
+    max-width: 400px;
+}
+
+.bottom-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#imgBtn {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.reset-btn {
+    background: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.focus-btn {
+    background: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+#clearBtn {
+  background: #111827;
+  color: #f97316;
+}
+
+.agent-off {
+  background: #444;
+  color: #aaa;
+  border: 1px solid #666;
+}
+
+.agent-on {
+  background: #1a5c1a;
+  color: #7fff7f;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 8px #4caf5066;
+}
+
+#send {
+  flex: 1;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+}
+
+#send:disabled {
+  background: #312e81;
+  cursor: not-allowed;
+}
+
+#imgPreview {
+  position: relative;
+  margin-top: 4px;
+}
+
+#imgPreview img {
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+}
+
+#removeImg {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.8rem;
+  line-height: 22px;
+  text-align: center;
+  padding: 0;
+}
+
+#status {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: right;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 8px;
+  }
+}
+
+.copy-btn {
+  display: block;
+  margin: 4px 0 2px 0;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: #2d2d2d;
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #3d3d3d;
+  color: #fff;
+}
+.code-btn-row {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 2px 0;
+}
+
+.sandbox-btn {
+  background: #1a3a2a;
+  color: #5dba7d;
+  border-color: #2d6b4a;
+}
+
+.sandbox-btn:hover {
+  background: #2d6b4a;
+  color: #fff;
+}
+
+.code-btn-row {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 2px 0;
+}
+
+.sandbox-btn {
+  background: #1a3a2a;
+  color: #5dba7d;
+  border-color: #2d6b4a;
+}
+
+.sandbox-btn:hover {
+  background: #2d6b4a;
+  color: #fff;
+}

@@ -1,0 +1,197 @@
+[
+{
+    "app": "io.homeassistant.companion.android",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "low",
+    "action": "mute",
+    "reason": "HA belső értesítés",
+    "appRegex": false
+  },
+  {
+    "app": "com.tplink.iot",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "high",
+    "action": "alert",
+    "reason": "TP-Link kamera mozgásérzékelő",
+    "appRegex": false
+  },
+  {
+    "app": "com.google.android.apps.youtube.music",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "low",
+    "action": "mute",
+    "reason": "YouTube Music promóció",
+    "appRegex": false
+  },
+  {
+    "app": "arcsi",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "high",
+    "action": "alert",
+    "reason": "Arcsi rendszer értesítés",
+    "appRegex": false
+  },
+  {
+    "app": "shop|market|deal|coupon|promo|ads",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "low",
+    "action": "mute",
+    "reason": "Reklám app pattern",
+    "appRegex": true
+  },
+  {
+    "app": null,
+    "titleRegex": null,
+    "textRegex": "kedvezmény|akció|leárazás|vásárolj|kattints|ajánlat",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Reklám szöveg",
+    "appRegex": false
+  },
+  {
+    "app": null,
+    "titleRegex": null,
+    "textRegex": "tranzakció|utalás|egyenleg|fizetés|jóváírás",
+    "importance": "high",
+    "action": "alert",
+    "reason": "Pénzügyi értesítés",
+    "appRegex": false
+  },
+  {
+    "app": "whatsapp|messenger|telegram|signal|viber",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "high",
+    "action": "alert",
+    "reason": "Személyes üzenet",
+    "appRegex": true
+  },
+  {
+    "app": "com.facebook.orca",
+    "titleRegex": null,
+    "textRegex": null,
+    "importance": "high",
+    "action": "alert",
+    "reason": "Facebook Messenger",
+    "appRegex": false
+  },
+  {
+    "app": "com.franco.kernel",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Túl gyakori, másodpercenként akkor is küld akkumulátor állapot értesítéseket - spam jellegű"
+  },
+  {
+    "app": "com.facebook.orca",
+    "importance": "high",
+    "action": "keep",
+    "reason": "Családi kommunikáció, fontos üzenetek - de érdemes csoportosítva kezelni"
+  },
+  {
+    "app": "hu.ekreta.guardian",
+    "importance": "high",
+    "action": "alert",
+    "reason": "Iskolai értesítések (mulasztás, értékelés, számonkérés) - fontos, de sok"
+  },
+  {
+    "app": "hu.otpbank.mobile",
+    "importance": "high",
+    "action": "alert",
+    "reason": "Banki tranzakciók, pénzügyi értesítések - figyelmeztetést érdemelnek"
+  },
+  {
+    "app": "com.google.android.gm",
+    "importance": "medium",
+    "action": "group",
+    "reason": "Sok reklám email (Temu, AliExpress, Beliani, Pinterest) és néhány fontos levél - csoportosítva érdemes kezelni"
+  },
+  {
+    "app": "com.shopping.app",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Spam jellegű akciós értesítések, többször ismétlődő szöveggel"
+  },
+  {
+    "app": "com.android.providers.downloads",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Letöltés befejeződött értesítések - alacsony prioritás"
+  },
+  {
+    "app": "com.offsec.nethunter.store",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Tárolók frissítése értesítések - háttérben futó folyamat"
+  },
+  {
+    "app": "com.amazon.mShop.android.shopping",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Időnkénti spam akciós értesítések"
+  },
+  {
+    "app": "com.facebook.katana",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Gyanús nyereményjáték spam értesítés"
+  },
+  {
+    "app": "com.termux",
+    "importance": "low",
+    "action": "keep",
+    "reason": "Termux session értesítések - technikai jellegű"
+  },
+  {
+    "app": "com.google.android.apps.maps",
+    "importance": "medium",
+    "action": "keep",
+    "reason": "Navigációs értesítések - hasznos, de ideiglenes"
+  },
+  {
+    "app": "org.telegram.messenger.web",
+    "importance": "medium",
+    "action": "keep",
+    "reason": "Telegram csoportüzenetek - közepes prioritás"
+  },
+  {
+    "app": "com.google.android.dialer",
+    "importance": "high",
+    "action": "alert",
+    "reason": "hívás"
+  },
+  {
+    "app": "com.google.android.deskclock",
+    "importance": "high",
+    "action": "alert",
+    "reason": "ébresztő"
+  },
+  {
+    "app": "penny",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Penny app értesítések - nem sürgős"
+  },
+  {
+    "app": "com.google.android.youtube",
+    "importance": "low",
+    "action": "mute",
+    "reason": "YouTube értesítések - nem sürgős, zavaró lehet"
+  },
+  {
+    "app": "com.android.vending",
+    "importance": "low",
+    "action": "mute",
+    "reason": "Google Play értesítések - gyakran nem sürgős, promóciós jellegű"
+  },
+  {
+    "app": "com.alibaba.aliexpresshd",
+    "importance": "low",
+    "action": "mute",
+    "reason": "AliExpress értesítések - nem sürgős, promóciós jellegű"
+  }
+]

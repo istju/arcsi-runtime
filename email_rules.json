@@ -1,0 +1,23 @@
+[
+  {
+    "keywordRegex": "találkozó|megbeszélés|tali|talizzunk|időpont|termin|gyere|gyerünk|váljunk|jövő (hétfő|kedd|szerda|csütörtök|péntek|szombat|vasárnap)|holnap|ma este|ma reggel",
+    "type": "force_ai",
+    "reason": "Időpont/esemény kulcsszó - AI elemzés naptárbejegyzéshez"
+  },
+  {
+    "fromRegex": true,
+    "from": "facebookmail|vevor|rumble|pinterest|hirlevel",
+    "type": "ignore",
+    "reason": "Reklám/hírlevél/social"
+  },
+  {
+    "from": "your@email.com",
+    "type": "always_important",
+    "reason": "Kijelölt fontos feladó"
+  },
+  {
+    "keywordRegex": "számla|fizetés|befizetés|vidanet|MVM\\.hu|MVM Next|yettel|kötelező|KGFB|NAV\\.gov|nemzeti adó- és vámhivatal|adó(bevallás|hivatal|ügy)|dokumentum|biztosítás|gépjármű|ügyfélkapu|önkormányzat|bíróság|végzés|idézés|vizit|rendelő|orvos|vérvétel|eredmény|egyenleg|tranzakció|jóváírás|terhelés|hitel|törlesztés|díjbekérő|szerződés|lejár|futár|csomag|GLS|DPD|MPL|posta",
+    "type": "always_important",
+    "reason": "Fontos hivatalos/pénzügyi/egészségügyi kulcsszó"
+  }
+]

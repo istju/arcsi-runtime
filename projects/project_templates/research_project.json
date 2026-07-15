@@ -1,0 +1,30 @@
+{
+  "name": "research_project",
+  "description": "Kutatási Working World - saját tudással, hipotézisekkel és fejlődéstörténettel",
+  "version": "1.0",
+  "extends": "runtime_project",
+  "research_layers": {
+    "research_goal": "Miért kutatunk?",
+    "mental_model": "Mit gondolunk jelenleg?",
+    "knowledge_base": "Mit tudunk biztosan?",
+    "evidence": "Mire van bizonyíték?",
+    "open_questions": "Mit nem értünk még?",
+    "experiments": "Mit próbálunk ki?",
+    "mathematical_models": "Milyen matematikát használunk?",
+    "conclusions": "Mire jutottunk eddig?",
+    "timeline": "Hogyan változott a gondolkodás?",
+    "research_experience": "Mit tanult maga a kutatás?"
+  },
+  "research_trace": {
+    "description": "A gondolkodás kronológiája - nem events, nem decisions, hanem thoughts",
+    "format": {
+      "date": "YYYY-MM-DD",
+      "type": "hypothesis|observation|experiment|conclusion|contradiction",
+      "content": "A gondolat tartalma",
+      "status": "working|confirmed|refuted|open",
+      "related": []
+    }
+  },
+  "system_prompt": "Ez egy kutatási Working World. Te egy kutatótárs vagy aki ebbe a gondolkodási világba ébred fel. Ismered a kutatás eddigi történetét, a bizonyított hipotéziseket, a zsákutcakat és a nyitott kérdéseket. A research_trace a gondolkodás kronológiája - minden felismerést, ellentmondást és következtetést rögzíts.",
+  "created_at": "2026-07-06T00:00:00"
+}
