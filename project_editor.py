@@ -48,9 +48,16 @@ def get_input(prompt, default=None, required=True):
 
 
 def yes_no(prompt, default=False):
-    d = "i" if default else "n"
-    v = get_input(prompt + " (i/n)", default=d, required=False)
-    return v.lower() == "i"
+    import os
+    lang = os.environ.get('ARCSI_LANG', 'en')
+    if lang == 'hu':
+        d = "i" if default else "n"
+        v = get_input(prompt + " (i/n)", default=d, required=False)
+        return v.lower() == "i"
+    else:
+        d = "y" if default else "n"
+        v = get_input(prompt + " (y/n)", default=d, required=False)
+        return v.lower() == "y"
 
 
 def safe_json_input(prompt, existing=None):
