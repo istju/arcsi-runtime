@@ -88,5 +88,33 @@
     "system_prompt": "System prompt",
     "rules": "Szabályok",
     "goodbye": "Viszlát!"
+  },
+  "tools": {
+    "forbidden_path": "Tiltott útvonal: {path}",
+    "missing_param": "Hiányzó paraméter: {param}",
+    "saved": "Mentve: {path}",
+    "no_active_project": "Nincs aktív projekt",
+    "context_not_found": "Projekt context.json nem található: {path}",
+    "no_research_trace": "Nincs research_trace a projektben",
+    "protected_file": "Védett fájl, file_write tool-lal nem írható: {file}. Használd a Provider Setup Wizard-ot.",
+    "file_too_large": "A fájl mérete meghaladja a 10 MB-t.",
+    "forbidden_command": "Tiltott parancs: {cmd}",
+    "unsafe_url": "Nem biztonságos URL: {url}",
+    "http_timeout": "HTTP kérés timeout ({timeout}s): {url}",
+    "missing_path": "Hiányzó path",
+    "registered": "Tool regisztrálva: {name}",
+    "calendar_disabled": "A naptár-integráció kikapcsolva a jelenlegi capability profile szerint",
+    "missing_title_date": "Hiányzó kötelező mező: title vagy date",
+    "missing_target_file": "Hiányzó target_file",
+    "backup_not_found": "Backup nem található",
+    "target_not_writable": "Eredeti fájl nem írható (nem létezik a cél mappa?)",
+    "missing_target": "Hiányzó paraméter: target (proxmox vagy phone)",
+    "missing_prompt": "Hiányzó paraméter: prompt",
+    "unknown_target": "Ismeretlen target: {target}. Használd: proxmox",
+    "trace_added": "Research trace bővítve: {id}",
+    "protected_file_write": "Védett fájl, file_write tool-lal nem írható: {file}. Használd a Provider Setup Wizard-ot vagy kézi szerkesztést.",
+    "rollback_save_error": "Rollback mentési hiba",
+    "forbidden_command_blocked": "⚠️ Tiltott parancs blokkolva: {cmd}",
+    "http_timeout_error": "HTTP kérés timeout ({timeout}s): {url}"
   }
 }

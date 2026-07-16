@@ -3,16 +3,17 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { isPathAllowed, isUrlSafe } = require('../security/validator');
+const { t } = require('../utils/i18n');
 
 const toolRegistry = new Map();
 
 function registerTool(name, handler) {
     toolRegistry.set(name, handler);
-    console.log(`🔧 Tool regisztrálva: ${name}`);
+    console.log(t('tools.registered', {name: name}));
 }
 
 registerTool('file_read', async (input) => {
-    if (!isPathAllowed(input.path)) return { error: `Tiltott útvonal: ${input.path}` };
+    if (!isPathAllowed(input.path)) return { error: t('tools.forbidden_path', {path: input.path}) };
     try {
         const content = fs.readFileSync(input.path, 'utf8');
         return { content, size: content.length };
@@ -21,7 +22,7 @@ registerTool('file_read', async (input) => {
 
 registerTool('sandbox_write', async (input) => {
   const { filename, content, knowledge_id, purpose } = input;
-  if (!filename || !content) return { error: 'Hianyzo parameter: filename, content' };
+  if (!filename || !content) return { error: t('tools.missing_param', {param: 'filename, content'}) };
   
   const path = require('path');
   const fs = require('fs');
@@ -52,12 +53,12 @@ ${commentChar} ============================================
 
   const fullContent = metaHeader + content;
   fs.writeFileSync(targetPath, fullContent, 'utf8');
-  return { success: true, path: targetPath, message: `Mentve: ${targetPath}` };
+  return { success: true, path: targetPath, message: t('tools.saved', {path: targetPath}) };
 });
 
 registerTool('append_to_research_trace', async (input) => {
   const { knowledge_id, type, content, status, related, insight } = input;
-  if (!knowledge_id || !content) return { error: 'Hianyzo parameter: knowledge_id, content' };
+  if (!knowledge_id || !content) return { error: t('tools.missing_param', {param: 'knowledge_id, content'}) };
 
   const path = require('path');
   const fs = require('fs');
@@ -66,17 +67,17 @@ registerTool('append_to_research_trace', async (input) => {
   const project = await rc.getActiveProject();
 //  console.log('[TRACE DEBUG] aktiv projekt:', project?.context?.project_name || project?.context?.name);
   
-  if (!project?.context) return { error: 'Nincs aktiv projekt' };
+  if (!project?.context) return { error: t('tools.no_active_project') };
   
   const projectName = project.context.project_name || project.context.name;
   const contextPath = path.join(
     __dirname, '..', 'projects', 'my_projects', projectName, 'context.json'
   );
   
-  if (!fs.existsSync(contextPath)) return { error: `Projekt context.json nem talalhato: ${contextPath}` };
+  if (!fs.existsSync(contextPath)) return { error: t('tools.context_not_found', {path: contextPath}) };
   
   const d = JSON.parse(fs.readFileSync(contextPath, 'utf8'));
-  if (!d.research_trace) return { error: 'Nincs research_trace a projektben' };
+  if (!d.research_trace) return { error: t('tools.no_research_trace') };
   
   const entry = {
     date: new Date().toISOString().split('T')[0],
@@ -92,21 +93,21 @@ registerTool('append_to_research_trace', async (input) => {
   d.research_trace.push(entry);
   fs.writeFileSync(contextPath, JSON.stringify(d, null, 2), 'utf8');
   
-  return { success: true, knowledge_id, message: `Research trace bővítve: ${knowledge_id}` };
+  return { success: true, knowledge_id, message: t('tools.trace_added', {id: knowledge_id}) };
 });
 
 registerTool('file_write', async (input) => {
     const PROTECTED_FILES = ['.env', 'credentials.json', 'gmail_token.json'];
     const fileName = require('path').basename(input.path || '');
     if (PROTECTED_FILES.includes(fileName)) {
-        return { error: `Vedett fajl, file_write tool-lal nem irhato: ${fileName}. Hasznald a Provider Setup Wizard-ot vagy kezi szerkesztest credential-modositashoz.` };
+        return { error: t('tools.protected_file_write', {file: fileName}) };
     }
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
     if (input.content && Buffer.byteLength(input.content, 'utf8') > MAX_FILE_SIZE) {
-        return { error: `A fájl mérete meghaladja a 10 MB-t.` };
+        return { error: t('tools.file_too_large') };
     }
-    if (!isPathAllowed(input.path)) return { error: `Tiltott útvonal: ${input.path}` };
+    if (!isPathAllowed(input.path)) return { error: t('tools.forbidden_path', {path: input.path}) };
     try {
         const dir = path.dirname(input.path);
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -122,7 +123,7 @@ registerTool('file_write', async (input) => {
                 rollbackPath = path.join(rollbackDir, `${ts}_${safeName}`);
                 fs.copyFileSync(input.path, rollbackPath);
             } catch (rbErr) {
-                console.error('Rollback mentési hiba:', rbErr.message);
+                console.error(t('tools.rollback_save_error') + ':', rbErr.message);
             }
         }
 
@@ -145,8 +146,8 @@ registerTool('shell_exec', async (input) => {
     const cmd = input.command;
     for (const pattern of FORBIDDEN_PATTERNS) {
         if (new RegExp(pattern, 'i').test(cmd)) {
-            console.warn(`⚠️ Tiltott parancs blokkolva: ${cmd}`);
-            return { error: `Tiltott parancs: ${cmd}` };
+            console.warn(t('tools.forbidden_command_blocked', {cmd: cmd}));
+            return { error: t('tools.forbidden_command', {cmd: cmd}) };
         }
     }
     try {
@@ -180,7 +181,7 @@ registerTool('shell_exec', async (input) => {
 });
 
 registerTool('http_request', async (input) => {
-    if (!isUrlSafe(input.url)) return { error: `Nem biztonságos URL: ${input.url}` };
+    if (!isUrlSafe(input.url)) return { error: t('tools.unsafe_url', {url: input.url}) };
     const timeoutMs = input.timeout || 15000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -199,7 +200,7 @@ registerTool('http_request', async (input) => {
         return { status: resp.status, body: text.substring(0, 5000) };
     } catch (e) {
         if (e.name === 'AbortError') {
-            return { error: `HTTP kérés timeout (${timeoutMs / 1000}s): ${input.url}` };
+            return { error: t('tools.http_timeout_error', {timeout: timeoutMs/1000, url: input.url}) };
         }
         return { error: e.message };
     } finally {
@@ -208,8 +209,8 @@ registerTool('http_request', async (input) => {
 });
 
 registerTool('file_list', async (input) => {
-    if (!input.path) return { error: 'Hiányzó path' };
-    if (!isPathAllowed(input.path)) return { error: `Tiltott útvonal: ${input.path}` };
+    if (!input.path) return { error: t('tools.missing_path') };
+    if (!isPathAllowed(input.path)) return { error: t('tools.forbidden_path', {path: input.path}) };
     try {
         const items = fs.readdirSync(input.path, { withFileTypes: true });
         const listing = items.map(item => ({
@@ -222,8 +223,8 @@ registerTool('file_list', async (input) => {
 });
 
 registerTool('file_delete', async (input) => {
-    if (!input.path) return { error: 'Hiányzó path' };
-    if (!isPathAllowed(input.path)) return { error: `Tiltott útvonal: ${input.path}` };
+    if (!input.path) return { error: t('tools.missing_path') };
+    if (!isPathAllowed(input.path)) return { error: t('tools.forbidden_path', {path: input.path}) };
     try {
         fs.unlinkSync(input.path);
         return { success: true, deleted: input.path };
@@ -234,14 +235,14 @@ registerTool('calendar_create_event', async (input) => {
     try {
         const capabilityProfile = require('../utils/capabilityProfile');
         if (!capabilityProfile.isEnabled('calendar_integration')) {
-            return { error: 'A naptár-integráció kikapcsolva a jelenlegi capability profile szerint' };
+            return { error: t('tools.calendar_disabled') };
         }
     } catch (e) { /* capabilityProfile opcionális, hiba esetén engedjük át */ }
 
     try {
         const calendarClient = require('../calendarClient');
         if (!input.title || !input.date) {
-            return { error: 'Hiányzó kötelező mező: title vagy date' };
+            return { error: t('tools.missing_title_date') };
         }
         const event = await calendarClient.createEvent({
             title: input.title,
@@ -272,13 +273,13 @@ registerTool('system_info', async (input) => {
 });
 
 registerTool('rollback_restore', async (input) => {
-    if (!input.target_file) return { error: 'Hiányzó target_file' };
-    if (!isPathAllowed(input.target_file)) return { error: `Tiltott útvonal: ${input.target_file}` };
+    if (!input.target_file) return { error: t('tools.missing_target_file') };
+    if (!isPathAllowed(input.target_file)) return { error: t('tools.forbidden_path', {path: input.target_file}) };
 
     try {
         const rollbackDir = path.join(__dirname, '..', 'chat_logs', 'tool_rollback');
         if (!fs.existsSync(rollbackDir)) {
-            return { error: 'Backup nem található', ok: false };
+            return { error: t('tools.backup_not_found'), ok: false };
         }
 
         const normalized = input.target_file.replace(/[\/\\]/g, '_');
@@ -289,14 +290,14 @@ registerTool('rollback_restore', async (input) => {
             .reverse();
 
         if (matching.length === 0) {
-            return { error: 'Backup nem található', ok: false };
+            return { error: t('tools.backup_not_found'), ok: false };
         }
 
         const latestBackup = matching[0];
         const backupPath = path.join(rollbackDir, latestBackup);
 
         if (!fs.existsSync(input.target_file)) {
-            return { error: 'Eredeti fájl nem írható (nem létezik a cél mappa?)', ok: false };
+            return { error: t('tools.target_not_writable'), ok: false };
         }
 
         // "Undo of undo" - a rollback előtti állapot is mentve
@@ -320,7 +321,7 @@ registerTool('rollback_restore', async (input) => {
 
 registerTool('instance_call', async (input) => {
     const { target, action, prompt } = input;
-    if (!target) return { error: 'Hianyzo parameter: target (proxmox vagy phone)' };
+    if (!target) return { error: t('tools.missing_target') };
 
     try {
         const path = require('path');
@@ -331,55 +332,16 @@ registerTool('instance_call', async (input) => {
             if (action === 'health') {
                 return await checkProxmoxHealth();
             }
-            if (!prompt) return { error: 'Hianyzo parameter: prompt (mit kuldjunk a Proxmoxnak)' };
+            if (!prompt) return { error: t('tools.missing_prompt') };
             const useAgent = (action === 'agent');
             return await delegateToProxmox({ prompt, sessionId: `instance_call_${Date.now()}`, useAgent });
         }
 
-        return { error: `Ismeretlen target: ${target}. Hasznald: proxmox` };
+        return { error: t('tools.unknown_target', {target: target}) };
     } catch (e) {
         return { error: e.message };
     }
 });
 
-// Home Assistant állapot lekérdezés tool
-/*registerTool('ha_get_state', async (input) => {
-    const HA_URL = process.env.HA_URL;
-    const HA_TOKEN = process.env.HA_TOKEN;
-
-    if (!HA_URL || !HA_TOKEN) {
-        return { error: 'HA_URL vagy HA_TOKEN nincs beállítva a .env-ben' };
-    }
-
-    if (!input.entity_id) {
-        return { error: 'Hiányzó entity_id paraméter' };
-    }
-
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        const res = await fetch(`${HA_URL}/api/states/${input.entity_id}`, {
-            headers: {
-                'Authorization': `Bearer ${HA_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        if (!res.ok) {
-            return { error: `HA API hiba: ${res.status} - ${await res.text()}` };
-        }
-
-        const data = await res.json();
-        return { success: true, entity_id: input.entity_id, state: data.state, attributes: data.attributes };
-    } catch (e) {
-        if (e.name === 'AbortError') {
-            return { error: 'Időtúllépés a HA API válaszára várva' };
-        }
-        return { error: e.message };
-    }
-});
-*/
 
 module.exports = { toolRegistry, registerTool };

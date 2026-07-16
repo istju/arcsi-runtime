@@ -88,5 +88,33 @@
     "system_prompt": "System prompt",
     "rules": "Rules",
     "goodbye": "Goodbye!"
+  },
+  "tools": {
+    "forbidden_path": "Forbidden path: {path}",
+    "missing_param": "Missing parameter: {param}",
+    "saved": "Saved: {path}",
+    "no_active_project": "No active project",
+    "context_not_found": "Project context.json not found: {path}",
+    "no_research_trace": "No research_trace in project",
+    "protected_file": "Protected file, cannot write with file_write: {file}. Use Provider Setup Wizard or manual editing.",
+    "file_too_large": "File size exceeds 10 MB.",
+    "forbidden_command": "Forbidden command: {cmd}",
+    "unsafe_url": "Unsafe URL: {url}",
+    "http_timeout": "HTTP request timeout ({timeout}s): {url}",
+    "missing_path": "Missing path",
+    "registered": "Tool registered: {name}",
+    "calendar_disabled": "Calendar integration disabled in current capability profile",
+    "missing_title_date": "Missing required field: title or date",
+    "missing_target_file": "Missing target_file",
+    "backup_not_found": "Backup not found",
+    "target_not_writable": "Target file not writable (does the target directory exist?)",
+    "missing_target": "Missing parameter: target (proxmox or phone)",
+    "missing_prompt": "Missing parameter: prompt",
+    "unknown_target": "Unknown target: {target}. Use: proxmox",
+    "trace_added": "Research trace updated: {id}",
+    "protected_file_write": "Protected file, cannot write with file_write: {file}. Use Provider Setup Wizard or manual editing.",
+    "rollback_save_error": "Rollback save error",
+    "forbidden_command_blocked": "⚠️ Forbidden command blocked: {cmd}",
+    "http_timeout_error": "HTTP request timeout ({timeout}s): {url}"
   }
 }
