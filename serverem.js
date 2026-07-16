@@ -3,6 +3,7 @@
 // CORS, history limit, log cleanup, agent session folytatás
 require('dotenv').config({ path: __dirname + '/.env' });
 
+const { t } = require('./utils/i18n');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -77,7 +78,7 @@ let notificationRules = [];
 try {
   if (fs.existsSync(RULES_FILE)) {
     notificationRules = JSON.parse(fs.readFileSync(RULES_FILE, 'utf8'));
-    info(`📋 Szabályok betöltve: ${notificationRules.length} db`);
+    info(`📋 ${t("server.rules_loaded", {count: notificationRules.length})}`);
   }
 } catch (e) {
   debug('⚠️ Szabály betöltési hiba:', e.message);
@@ -94,13 +95,13 @@ function saveRules() {
 function addNotificationRule(rule) {
   notificationRules.push(rule);
   saveRules();
-  info(`📋 Szabály hozzáadva: ${rule.app || '*'} → ${rule.action}`);
+  info(`📋 ${t("server.rule_added", {app: rule.app || "*", action: rule.action})}`);
 }
 
 function clearNotificationRules(appName = null) {
   if (appName) {
     notificationRules = notificationRules.filter(r => r.app !== appName);
-    info(`🗑️ Szabályok törölve appra: ${appName}`);
+    info(`🗑️ ${t("server.rules_deleted_app", {app: appName})}`);
   } else {
     notificationRules = [];
     info(`🗑️ Összes szabály törölve`);
@@ -188,7 +189,7 @@ async function buildProjectContext() {
     const runtimeData = await runtimeClient.getActiveProject();
     if (runtimeData?.context) {
       activeProject = runtimeData.context;
-      info(`📁 Aktív projekt (runtime): ${activeProject.name}`);
+      info(`📁 ${t("project.active_runtime", {name: activeProject.name})}`);
     }
   } catch (e) {
     debug('Runtime daemon nem elérhető:', e.message);
@@ -198,7 +199,7 @@ async function buildProjectContext() {
   if (!activeProject) {
     try {
       activeProject = projectManager.getActiveProject();
-      if (activeProject) info(`📁 Aktív projekt (fallback): ${activeProject.name}`);
+      if (activeProject) info(`📁 ${t("project.active_fallback", {name: activeProject.name})}`);
     } catch (e) {
       debug('ProjectManager fallback hiba:', e.message);
     }

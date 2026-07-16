@@ -1,0 +1,42 @@
+{
+  "server": {
+    "starting": "Server starting...",
+    "running": "Server running on port {port}",
+    "rules_loaded": "Rules loaded: {count}",
+    "rule_added": "Rule added: {app} → {action}",
+    "rules_deleted_app": "Rules deleted for app: {app}",
+    "rules_deleted_all": "All rules deleted"
+  },
+  "project": {
+    "active_runtime": "Active project (runtime): {name}",
+    "active_fallback": "Active project (fallback): {name}",
+    "daemon_unavailable": "Runtime daemon unavailable"
+  },
+  "notify": {
+    "agent": "Notify agent: {app} - {title}",
+    "quick_rule": "Quick rule: {app} → {action}",
+    "error": "Notify agent error: {error}",
+    "log_error": "Notify log save error"
+  },
+  "gmail": {
+    "token_refreshed": "Gmail token refreshed from Proxmox",
+    "token_save_error": "Token save error"
+  },
+  "chat": {
+    "request": "Chat request: {provider} | session: {session}",
+    "response_ready": "Response ready ({length} chars) - provider: {provider}",
+    "error": "CHAT ERROR: {error}",
+    "provider_trying": "Trying: {provider}",
+    "provider_success": "Success: {provider}",
+    "provider_error": "Provider error {code}: {error}"
+  },
+  "agent": {
+    "request": "Agent request: {prompt}",
+    "step": "Agent step: {step}/{max}",
+    "done": "Agent done after {steps} steps",
+    "error": "Agent error: {error}"
+  },
+  "health": {
+    "recorded": "Health recorded: {date} - score {score} ({status})"
+  }
+}

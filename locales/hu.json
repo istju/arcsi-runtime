@@ -1,0 +1,42 @@
+{
+  "server": {
+    "starting": "Szerver indul...",
+    "running": "Szerver fut a {port} porton",
+    "rules_loaded": "Szabályok betöltve: {count} db",
+    "rule_added": "Szabály hozzáadva: {app} → {action}",
+    "rules_deleted_app": "Szabályok törölve appra: {app}",
+    "rules_deleted_all": "Összes szabály törölve"
+  },
+  "project": {
+    "active_runtime": "Aktív projekt (runtime): {name}",
+    "active_fallback": "Aktív projekt (fallback): {name}",
+    "daemon_unavailable": "Runtime daemon nem elérhető"
+  },
+  "notify": {
+    "agent": "Notify agent: {app} - {title}",
+    "quick_rule": "Gyors szabály: {app} → {action}",
+    "error": "Notify agent hiba: {error}",
+    "log_error": "Notify log mentési hiba"
+  },
+  "gmail": {
+    "token_refreshed": "Gmail token frissítve a Proxmoxtól",
+    "token_save_error": "Token mentési hiba"
+  },
+  "chat": {
+    "request": "Chat kérés: {provider} | session: {session}",
+    "response_ready": "Válasz kész ({length} karakter) - provider: {provider}",
+    "error": "CHAT HIBA: {error}",
+    "provider_trying": "Próbálkozás: {provider}",
+    "provider_success": "Sikeres válasz: {provider}",
+    "provider_error": "Provider hiba {code}: {error}"
+  },
+  "agent": {
+    "request": "Agent kérés: {prompt}",
+    "step": "Agent lépés: {step}/{max}",
+    "done": "Agent kész {steps} lépés után",
+    "error": "Agent hiba: {error}"
+  },
+  "health": {
+    "recorded": "Health rögzítve: {date} - score {score} ({status})"
+  }
+}
