@@ -377,45 +377,6 @@ Engedélyezett mappák:
 - (teljes utvonalakat mindig abszolut modon add meg)
 `.trim();
 
-// ================================================================
-// AIDER PROXY ENDPOINTS
-// ================================================================
-app.get('/v1/models', (req, res) => {
-  res.json({
-    data: [{ id: 'gpt-4', object: 'model', created: 1677610602, owned_by: 'openai' }],
-  });
-});
-
-app.post('/v1/chat/completions', async (req, res) => {
-  try {
-    const provider = getProvider();
-    info('🚀 Aider kérés → ' + provider.name);
-    const response = await fetch(provider.api_url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + provider.api_key },
-      body: JSON.stringify({ model: provider.model, messages: req.body.messages, stream: false }),
-    });
-    const data = await response.json();
-    res.json({
-      id: 'chatcmpl-' + Date.now(),
-      object: 'chat.completion',
-      created: Math.floor(Date.now() / 1000),
-      model: 'gpt-4',
-      choices: [{
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: data?.message?.content || data?.choices?.[0]?.message?.content || data?.response || '',
-        },
-        finish_reason: 'stop',
-      }],
-      usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
-    });
-  } catch (err) {
-    debug('❌ Aider hiba:', err.message);
-    res.status(500).json({ error: { message: err.message } });
-  }
-});
 
 // ================================================================
 // AGENT ENDPOINTOK
