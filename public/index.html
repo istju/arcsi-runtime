@@ -1,39 +1,39 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat Pro v2</title>
+  <title>Arcsi Runtime</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <div class="title">🤖 AI Chat Pro v2</div>
-    <div class="provider" id="providerInfo">Betöltés...</div>
+    <div class="title">🤖 Arcsi Runtime</div>
+    <div class="provider" id="providerInfo">Loading...</div>
   </header>
 
   <main>
     <section id="chat"></section>
 
     <section id="inputArea">
-      <textarea id="prompt" placeholder="Kérdezz bármit... (Shift+Enter: új sor)"></textarea>
+      <textarea id="prompt" placeholder="Ask anything... (Shift+Enter: new line)"></textarea>
 
       <div id="imgPreview" class="hidden">
-        <button id="removeImg" title="Kép eltávolítása">✕</button>
-        <img id="previewImg" src="" alt="előnézet">
+        <button id="removeImg" title="Remove image">✕</button>
+        <img id="previewImg" src="" alt="preview">
       </div>
 
       <div class="bottom-row">
-  <div class="btn-row-top">
-    <button id="imgBtn" title="Kép feltöltése">🖼️</button>
-    <button id="clearBtn" title="Beszélgetés törlése">🧹</button>
-    <button id="agentBtn" title="Agent mód" class="agent-off">🤖 Agent</button>
-    <button id="resetBtn" title="Új feladat - session törlése" class="reset-btn">🔄 Új feladat</button>
-    <button id="saveProgressBtn" title="Kontextus mentése" class="save-btn">💾 Mentés</button>
-    <button id="focusBtn" title="Aktuális fókusz beállítása" class="focus-btn">🎯 Fókusz</button>
-  </div>
-  <button id="send">KÜLDÉS</button>
-</div>
+        <div class="btn-row-top">
+          <button id="imgBtn" title="Upload image">🖼️</button>
+          <button id="clearBtn" title="Clear conversation">🧹</button>
+          <button id="agentBtn" title="Agent mode" class="agent-off">🤖 Agent</button>
+          <button id="resetBtn" title="New task - clear session" class="reset-btn">🔄 New task</button>
+          <button id="saveProgressBtn" title="Save context" class="save-btn">💾 Save</button>
+          <button id="focusBtn" title="Set current focus" class="focus-btn">🎯 Focus</button>
+        </div>
+        <button id="send">SEND</button>
+      </div>
 
       <input type="file" id="fileInput" accept="image/*" class="hidden">
       <div id="status"></div>

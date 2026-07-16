@@ -9,11 +9,11 @@ function copyCode(block, btn) {
     ta.select();
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
-    btn.textContent = ok ? '✅ Másolva!' : '❌ Hiba';
-    setTimeout(() => btn.textContent = '📋 Másol', 2000);
+    btn.textContent = ok ? UI.copy_success : UI.copy_error;
+    setTimeout(() => btn.textContent = UI.copy, 2000);
   } catch(e) {
-    btn.textContent = '❌ Hiba';
-    setTimeout(() => btn.textContent = '📋 Másol', 2000);
+    btn.textContent = UI.copy_error;
+    setTimeout(() => btn.textContent = UI.copy, 2000);
   }
 }
 
@@ -33,7 +33,7 @@ function addCopyButtons(container) {
 
     // 📋 Másol gomb
     const copyBtn = document.createElement('button');
-    copyBtn.textContent = '📋 Másol';
+    copyBtn.textContent = UI.copy;
     copyBtn.className = 'copy-btn';
     copyBtn.onclick = () => copyCode(block, copyBtn);
     btnRow.appendChild(copyBtn);
@@ -41,7 +41,7 @@ function addCopyButtons(container) {
     // 💾 Sandboxba gomb (python, bash)
     if (isSandboxable) {
       const sandboxBtn = document.createElement('button');
-      sandboxBtn.textContent = '💾 Sandboxba';
+      sandboxBtn.textContent = UI.sandbox;
       sandboxBtn.className = 'copy-btn sandbox-btn';
       sandboxBtn.onclick = async () => {
         const ext = lang === 'python' ? '.py' : '.sh';
@@ -51,8 +51,8 @@ function addCopyButtons(container) {
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEY },
           body: JSON.stringify({ prompt: 'Mentsd el ezt a kódot sandbox_write tool-lal, filename: ' + filename + ', content: ' + block.textContent, sessionId: sessionId })
         });
-        sandboxBtn.textContent = '✅ Mentve!';
-        setTimeout(() => sandboxBtn.textContent = '💾 Sandboxba', 2000);
+        sandboxBtn.textContent = UI.sandbox_saved;
+        setTimeout(() => sandboxBtn.textContent = UI.sandbox, 2000);
       };
       btnRow.appendChild(sandboxBtn);
     }
@@ -62,6 +62,42 @@ function addCopyButtons(container) {
 }
 
 const API_KEY = '11111111';
+
+const UI = {
+  copy: '📋 Copy',
+  copy_success: '✅ Copied!',
+  copy_error: '❌ Error',
+  sandbox: '💾 To Sandbox',
+  sandbox_saved: '✅ Saved!',
+  provider_local: 'Local AI server (/{sessionId})',
+  agent_on: '🤖 Agent ON',
+  agent_off: '🤖 Agent',
+  agent_active_status: '🤖 Agent mode active — tools available!',
+  task_ready: '🔄 New task ready!',
+  context_prompt: 'What would you like to add to the context?',
+  context_saved: '💾 Context saved!',
+  focus_goal: 'Current focus/goal?',
+  focus_reason: 'Why is this a priority?',
+  focus_estimated_time: 'Estimated time? (e.g. 1-2 hours, today)',
+  focus_related_files: 'Related files/modules? (comma separated)',
+  focus_success_criteria: 'When is it done? (criteria, comma separated)',
+  focus_set: '🎯 Focus set!',
+  confirm_clear: 'Are you sure you want to clear the conversation?',
+  image_sent: '(image sent)',
+  image_prompt_fallback: 'What do you see in this image? Describe it in detail.',
+  agent_working: '🤖 Agent working...',
+  waiting_response: '⏳ Thinking...',
+  server_error: 'Server error: ',
+  network_error: 'Network error: ',
+  error: '❌ Error',
+  agent_done: '✅ Agent done',
+  done: '✅ Done',
+  role_user: 'YOU',
+  role_agent: '🤖 Arcsi Agent',
+  role_assistant: 'Arcsi',
+  welcome_message: 'Hello! Type something or upload an image…'
+};
+
 const chatEl = document.getElementById('chat');
 const promptEl = document.getElementById('prompt');
 const sendBtn = document.getElementById('send');
@@ -89,8 +125,8 @@ providerInfo.textContent = 'Lokális AI szerver (/' + sessionId + ')';
 agentBtn.onclick = () => {
   agentMode = !agentMode;
   agentBtn.className = agentMode ? 'agent-on' : 'agent-off';
-  agentBtn.textContent = agentMode ? '🤖 Agent ON' : '🤖 Agent';
-  statusEl.textContent = agentMode ? '🤖 Agent mód aktív — eszközöket is használhat!' : '';
+  agentBtn.textContent = agentMode ? UI.agent_on : UI.agent_off;
+  statusEl.textContent = agentMode ? UI.agent_active_status : '';
 };
 
 resetBtn.onclick = async () => {
@@ -99,7 +135,7 @@ resetBtn.onclick = async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId: sessionId })
     });
-    statusEl.textContent = '🔄 Új feladat kezdhető!';
+    statusEl.textContent = UI.task_ready;
     resetBtn.style.background = '#27ae60';
     setTimeout(() => {
         statusEl.textContent = '';
@@ -120,7 +156,7 @@ saveProgressBtn.onclick = async () => {
     const data = await res.json();
     if (data.ok) {
         saveProgressBtn.style.background = '#27ae60';
-        statusEl.textContent = '💾 Kontextus mentve!';
+        statusEl.textContent = UI.context_saved;
         setTimeout(() => {
             saveProgressBtn.style.background = '';
             statusEl.textContent = '';
@@ -159,7 +195,7 @@ focusBtn.onclick = async () => {
     const data = await res.json();
     if (data.ok) {
         focusBtn.style.background = '#27ae60';
-        statusEl.textContent = '🎯 Fókusz beállítva!';
+        statusEl.textContent = UI.focus_set;
         setTimeout(() => {
             focusBtn.style.background = '';
             statusEl.textContent = '';
@@ -212,7 +248,7 @@ document.addEventListener('paste', (e) => {
 });
 
 clearBtn.onclick = () => {
-  if (!confirm('Biztosan törlöd a beszélgetést?')) return;
+  if (!confirm(UI.confirm_clear)) return;
   messages = [];
   saveMessages();
   renderAllMessages();
@@ -224,7 +260,7 @@ sendBtn.onclick = async () => {
 
   const userMsg = {
     role: 'user',
-    content: text || '(kép küldve)',
+    content: text || UI.image_sent,
     image: currentImageBase64 ? previewImg.src : null
   };
   messages.push(userMsg);
@@ -239,7 +275,7 @@ sendBtn.onclick = async () => {
   const endpoint = agentMode ? '/agent/chat' : '/chat';
   const payload = agentMode
     ? { prompt: text, sessionId: sessionId, autonomous: true }
-    : { prompt: text || 'Mit látsz ezen a képen? Írd le részletesen magyarul.', sessionId: sessionId };
+    : { prompt: text || UI.image_prompt_fallback, sessionId: sessionId };
 
   if (!agentMode && currentImageBase64) {
     payload.image = currentImageBase64;
@@ -254,7 +290,7 @@ sendBtn.onclick = async () => {
 
   sendBtn.disabled = true;
   // ÚJ: státusz agent módban más
-  statusEl.textContent = agentMode ? '🤖 Agent dolgozik...' : '⏳ Válasz érkezik...';
+  statusEl.textContent = agentMode ? UI.agent_working : UI.waiting_response;
 
   try {
     const controller = new AbortController();
@@ -277,9 +313,9 @@ sendBtn.onclick = async () => {
 
     if (!response.ok) {
       const err = await response.text();
-      aiDiv.querySelector('.content').textContent = 'Szerver hiba: ' + err;
+      aiDiv.querySelector('.content').textContent = UI.server_error + err;
       aiDiv.classList.add('error');
-      statusEl.textContent = '❌ Hiba';
+      statusEl.textContent = UI.error;
       return;
     }
 
@@ -300,11 +336,11 @@ sendBtn.onclick = async () => {
     aiMsg.content = fullText;
     messages.push(aiMsg);
     saveMessages();
-    statusEl.textContent = agentMode ? '✅ Agent kész' : '✅ Kész';
+    statusEl.textContent = agentMode ? UI.agent_done : UI.done;
   } catch (e) {
-    aiDiv.querySelector('.content').textContent = 'Hálózati hiba: ' + e.message;
+    aiDiv.querySelector('.content').textContent = UI.network_error + e.message;
     aiDiv.classList.add('error');
-    statusEl.textContent = '❌ Hiba';
+    statusEl.textContent = UI.error;
   } finally {
     sendBtn.disabled = false;
     scrollToBottom();
@@ -319,7 +355,7 @@ function appendMessage(msg, returnElement = false) {
   const roleDiv = document.createElement('div');
   roleDiv.className = 'role';
   // ÚJ: agent módban jelöljük az AI üzenetet
-  roleDiv.textContent = msg.role === 'user' ? 'TE' : (agentMode ? '🤖 Arcsi Agent' : 'Arcsi');
+  roleDiv.textContent = msg.role === 'user' ? UI.role_user : (agentMode ? UI.role_agent : UI.role_assistant);
   wrapper.appendChild(roleDiv);
 
   const contentDiv = document.createElement('div');
@@ -342,7 +378,7 @@ function renderAllMessages() {
   if (messages.length === 0) {
     const div = document.createElement('div');
     div.className = 'message system';
-    div.innerHTML = '<div class="content">Üdv! Írj valamit, vagy tölts fel egy képet…</div>';
+    div.innerHTML = '<div class="content">' + UI.welcome_message + '</div>';
     chatEl.appendChild(div);
     return;
   }
