@@ -900,7 +900,19 @@ const weekEntries = emailDigest.getWeekEntries(7);
     fullAiResponse = data?.choices?.[0]?.message?.content || data?.message?.content || data?.response || '';
 // Chat tool detektálás
 const cleanedResponse = fullAiResponse.replace(/^AI:\s*/m, '');
-const toolMatch = cleanedResponse.match(/\{"tool"\s*:\s*"(sandbox_write|append_to_research_trace|file_read)"[\s\S]*\}/);
+const toolJsonStart = cleanedResponse.indexOf('{"tool"');
+let toolMatch = null;
+if (toolJsonStart !== -1) {
+  try {
+    const candidate = cleanedResponse.slice(toolJsonStart);
+    let depth = 0, end = 0;
+    for (let i = 0; i < candidate.length; i++) {
+      if (candidate[i] === '{') depth++;
+      else if (candidate[i] === '}') { depth--; if (depth === 0) { end = i+1; break; } }
+    }
+    if (end > 0) toolMatch = [candidate.slice(0, end)];
+  } catch(e) {}
+}
 if (toolMatch) {
   try {
     const toolCall = JSON.parse(toolMatch[0]);
