@@ -5,7 +5,17 @@
     "rules_loaded": "Szabályok betöltve: {count} db",
     "rule_added": "Szabály hozzáadva: {app} → {action}",
     "rules_deleted_app": "Szabályok törölve appra: {app}",
-    "rules_deleted_all": "Összes szabály törölve"
+    "rules_deleted_all": "Összes szabály törölve",
+    "server_started": "SZERVER ELINDULT!",
+    "server_address": "Cím: http://0.0.0.0:{port}",
+    "server_logs": "Logok: {path}",
+    "server_rules": "Értesítési szabályok: {count} aktív",
+    "server_fallback": "Fallback sorrend: {order}",
+    "server_max_steps": "Max lépések: 20",
+    "server_tools": "Regisztrált tool-ok: {tools}",
+    "health_recorded": "Health history rögzítve induláskor: {date} - score {score} ({status})",
+    "health_record_error": "Health history rögzítési hiba indításkor:",
+    "monitoring_disabled": "Monitorozás kikapcsolva (capability profile: system_monitor=false)"
   },
   "project": {
     "active_runtime": "Aktív projekt (runtime): {name}",

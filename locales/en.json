@@ -5,7 +5,17 @@
     "rules_loaded": "Rules loaded: {count}",
     "rule_added": "Rule added: {app} → {action}",
     "rules_deleted_app": "Rules deleted for app: {app}",
-    "rules_deleted_all": "All rules deleted"
+    "rules_deleted_all": "All rules deleted",
+    "server_started": "SERVER STARTED!",
+    "server_address": "Address: http://0.0.0.0:{port}",
+    "server_logs": "Logs: {path}",
+    "server_rules": "Notification rules: {count} active",
+    "server_fallback": "Fallback order: {order}",
+    "server_max_steps": "Max steps: 20",
+    "server_tools": "Registered tools: {tools}",
+    "health_recorded": "Health history recorded: {date} - score {score} ({status})",
+    "health_record_error": "Health history record error on startup:",
+    "monitoring_disabled": "Monitoring disabled (capability profile: system_monitor=false)"
   },
   "project": {
     "active_runtime": "Active project (runtime): {name}",
