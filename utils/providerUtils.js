@@ -4,6 +4,7 @@ const readline = require('readline');
 const { PROVIDERS, FALLBACK_ORDER } = require('../config/providers');
 const SETTINGS = require('../config/settings');
 const { info, debug } = require('./logger');
+const { t } = require('./i18n');
 
 function chooseProvider() {
     return new Promise((resolve) => {
