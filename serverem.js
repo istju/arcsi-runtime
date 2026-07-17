@@ -237,8 +237,8 @@ function applyProjectToPrompt(systemPrompt, activeProject) {
       const recentCount = Math.min(3, activeProject.research_trace.length);
       const recent = activeProject.research_trace.slice(-recentCount);
       systemPrompt += `Legutóbbi ${recentCount} kutatási bejegyzés:\n`;
-      recent.forEach(t => {
-        systemPrompt += `  [${t.knowledge_id || '?'}] [${t.type}] (${t.date}): ${t.content.substring(0, 150)}...\n`;
+      recent.forEach(trace => {
+        systemPrompt += `  [${trace.knowledge_id || '?'}] [${trace.type}] (${trace.date}): ${trace.content.substring(0, 150)}...\n`;
       });
     }
       
