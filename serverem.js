@@ -265,6 +265,8 @@ const SYSTEM_PROMPT = `
 {{HEALTH_CONTEXT}}
 {{CALENDAR_CONTEXT}}
 {{PROJECT_PATH_CONTEXT}}
+LANGUAGE: ${t('system.language_rule')}
+
 Your name is Arcsi.
 You run on Ollama Cloud.
 You are an advanced AI Agent system running in an Android (Termux) environment.
