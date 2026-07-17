@@ -899,7 +899,8 @@ const weekEntries = emailDigest.getWeekEntries(7);
 
     fullAiResponse = data?.choices?.[0]?.message?.content || data?.message?.content || data?.response || '';
 // Chat tool detektálás
-const toolMatch = fullAiResponse.match(/\{"tool"\s*:\s*"(sandbox_write|append_to_research_trace|file_read)".*\}/s);
+const cleanedResponse = fullAiResponse.replace(/^AI:\s*/m, '');
+const toolMatch = cleanedResponse.match(/\{"tool"\s*:\s*"(sandbox_write|append_to_research_trace|file_read)"[\s\S]*\}/);
 if (toolMatch) {
   try {
     const toolCall = JSON.parse(toolMatch[0]);
