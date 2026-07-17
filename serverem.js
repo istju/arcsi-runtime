@@ -822,7 +822,7 @@ Az alábbi tool-ok ENGEDÉLYEZVE vannak chat módban is:
 - append_to_research_trace: {"tool": "append_to_research_trace", "input": {"knowledge_id": "...", "content": "..."}} - CSAK explicit jóváhagyás után!
 - file_read: {"tool": "file_read", "input": {"path": "/data/data/com.termux/files/home/ai-chat-pro-v2/agent_work/work/UTVONAL/FAJLNEV"}} - sandbox/ es projects/ mappak is elérhetők
 Tool hívásnál CSAK a JSON-t küldd, semmi más szöveg!
-Más tool-okat NEM használhatsz. JSON formátumban hívd: {"tool": "sandbox_write", "input": {...}}, magyarul, lényegretörően.
+Only these tools are available. Call in JSON format: {"tool": "sandbox_write", "input": {...}}, concisely.
 Soha ne használj JSON formátumot a válaszban, hacsak a felhasználó nem kifejezetten kéri.
 Ha a felhasználó olyat kér, amihez tool-ok kellenének, akkor udvariasan kérd meg, hogy kapcsolja be az agent módot a gombbal.
 `.trim();
