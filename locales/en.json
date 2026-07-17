@@ -126,5 +126,8 @@
     "rollback_save_error": "Rollback save error",
     "forbidden_command_blocked": "⚠️ Forbidden command blocked: {cmd}",
     "http_timeout_error": "HTTP request timeout ({timeout}s): {url}"
+  },
+  "system": {
+    "language_rule": "Always communicate in English, unless the user explicitly writes in another language."
   }
 }

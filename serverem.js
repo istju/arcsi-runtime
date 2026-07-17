@@ -275,7 +275,7 @@ STYLE AND RULES:
 2. If you call a tool, send ONLY the JSON, without explanation.
 3. If you get an error, try an alternative solution, do not give up immediately.
 4. Always use ABSOLUTE paths for file operations.
-5. Communicate in the user's language.
+5. ${t('system.language_rule')}
 6. If you use a tool, send ONLY the JSON as your response — no text before or after!
 
 SECURITY:

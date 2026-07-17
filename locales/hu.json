@@ -126,5 +126,8 @@
     "rollback_save_error": "Rollback mentési hiba",
     "forbidden_command_blocked": "⚠️ Tiltott parancs blokkolva: {cmd}",
     "http_timeout_error": "HTTP kérés timeout ({timeout}s): {url}"
+  },
+  "system": {
+    "language_rule": "Mindig magyarul kommunikálj, hacsak a felhasználó nem ír kifejezetten más nyelven."
   }
 }
