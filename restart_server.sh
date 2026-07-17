@@ -6,7 +6,7 @@
 WORK_DIR="/data/data/com.termux/files/home/ai-chat-pro-v2/agent_work/work"
 PID_FILE="$WORK_DIR/server.pid"
 
-echo "🔍 Node szerver leállítása..."
+echo "🔍 Stopping Node server..."
 
 # 1. PID fájl alapú leállítás (a boot script ezt használja)
 if [ -f "$PID_FILE" ]; then
@@ -21,7 +21,7 @@ fi
 # 2. Biztonsági ráadás: minden serverem.js process leállítása
 PIDS=$(pgrep -f "node.*serverem.js")
 if [ -n "$PIDS" ]; then
-    echo "⚠️  Egyéb futó szerver process(ek) találva, leállítás: $PIDS"
+    echo "⚠️  Other server process(es) found, stopping: $PIDS"
     kill -9 $PIDS
 fi
 
@@ -32,13 +32,13 @@ REMAINING=$(pgrep -f "node.*serverem.js")
 if [ -n "$REMAINING" ]; then
     echo "❌ Még fut valami: $REMAINING"
 else
-    echo "✅ Minden szerver process leállítva"
+    echo "✅ All server processes stopped"
 fi
 
 echo ""
-echo "🐍 Python runtime daemon ellenőrzése..."
+echo "🐍 Checking Python runtime daemon..."
 if pgrep -f "python3.*runtime.server" > /dev/null; then
-    echo "✅ Python runtime daemon már fut"
+    echo "✅ Python runtime daemon already running"
 else
     echo "⚠️  Python runtime daemon nem fut - indítás..."
     cd "$WORK_DIR" || exit 1
@@ -52,6 +52,6 @@ else
 fi
 
 echo ""
-echo "🚀 Indítás előtérben (Ctrl+C-vel állítható meg)..."
+echo "🚀 Starting in foreground (Ctrl+C to stop)..."
 cd "$WORK_DIR" || exit 1
 node serverem.js

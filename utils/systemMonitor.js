@@ -43,16 +43,16 @@ function startMonitoring() {
     }
 
     if (!SETTINGS.MONITORING_ENABLED) {
-        debug('📊 Monitorozás kikapcsolva (MONITORING_ENABLED=false)');
+        debug('📊 Monitoring disabled (MONITORING_ENABLED=false)');
         return;
     }
     if (!capabilityAllows) {
-        debug('📊 Monitorozás kikapcsolva (capability profile: system_monitor=false)');
+        debug('📊 Monitoring disabled (capability profile: system_monitor=false)');
         return;
     }
     if (monitorInterval) return; // már fut
 
-    info(`📊 Monitorozás elindítva (${SETTINGS.MONITORING_INTERVAL_MS / 1000}s intervallum)`);
+    info(`📊 Monitoring started (${SETTINGS.MONITORING_INTERVAL_MS / 1000}s interval)`);
     checkSystem(); // azonnali első futás
     monitorInterval = setInterval(checkSystem, SETTINGS.MONITORING_INTERVAL_MS);
 }
@@ -61,7 +61,7 @@ function stopMonitoring() {
     if (monitorInterval) {
         clearInterval(monitorInterval);
         monitorInterval = null;
-        info('📊 Monitorozás leállítva');
+        info('📊 Monitoring stopped');
     }
 }
 

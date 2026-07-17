@@ -25,13 +25,13 @@ function chooseProvider() {
             console.log(`║  ${key})  ${available}  ${p.name.padEnd(28)}║`);
         });
         console.log('╚════════════════════════════════════╝');
-        console.log(`\nAlapértelmezett: ${defaultKey} (${provider.name})`);
-        console.log('3 másodperc múlva automatikusan indul...');
+        console.log(`\nDefault: ${defaultKey} (${provider.name})`);
+        console.log('Starting automatically in 3 seconds...');
 
         let secondsLeft = 3;
         const countdown = setInterval(() => {
             secondsLeft--;
-            if (secondsLeft > 0) process.stdout.write(`\r⏳ ${secondsLeft} másodperc...`);
+            if (secondsLeft > 0) process.stdout.write(`\r⏳ ${secondsLeft} seconds... `);
         }, 1000);
 
         const autoStart = setTimeout(() => {

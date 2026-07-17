@@ -3,7 +3,6 @@
 // CORS, history limit, log cleanup, agent session folytatás
 require('dotenv').config({ path: __dirname + '/.env' });
 
-const { t } = require('./utils/i18n');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -30,6 +29,7 @@ function getLocalDateInfo() {
 const SETTINGS = require('./config/settings');
 const { agentCall, agentLoop, executeTool } = require('./agents/agentLogic');
 const { info, error, debug, logToFile } = require('./utils/logger');
+const { t } = require('./utils/i18n');
 const { toolRegistry } = require('./tools/toolRegistry');
 const {
   chooseProvider,
@@ -78,7 +78,7 @@ let notificationRules = [];
 try {
   if (fs.existsSync(RULES_FILE)) {
     notificationRules = JSON.parse(fs.readFileSync(RULES_FILE, 'utf8'));
-    info(`📋 ${t("server.rules_loaded", {count: notificationRules.length})}`);
+    info(`📋 ${t('server.rules_loaded', {count: notificationRules.length})}`);
   }
 } catch (e) {
   debug('⚠️ Szabály betöltési hiba:', e.message);
@@ -95,13 +95,13 @@ function saveRules() {
 function addNotificationRule(rule) {
   notificationRules.push(rule);
   saveRules();
-  info(`📋 ${t("server.rule_added", {app: rule.app || "*", action: rule.action})}`);
+  info(`📋 ${t('server.rule_added', {app: rule.app || '*', action: rule.action})}`);
 }
 
 function clearNotificationRules(appName = null) {
   if (appName) {
     notificationRules = notificationRules.filter(r => r.app !== appName);
-    info(`🗑️ ${t("server.rules_deleted_app", {app: appName})}`);
+    info(`🗑️ ${t('server.rules_deleted_app', {app: appName})}`);
   } else {
     notificationRules = [];
     info(`🗑️ Összes szabály törölve`);
@@ -189,7 +189,7 @@ async function buildProjectContext() {
     const runtimeData = await runtimeClient.getActiveProject();
     if (runtimeData?.context) {
       activeProject = runtimeData.context;
-      info(`📁 ${t("project.active_runtime", {name: activeProject.name})}`);
+      info(`📁 ${t('project.active_runtime', {name: activeProject.name})}`);
     }
   } catch (e) {
     debug('Runtime daemon nem elérhető:', e.message);
@@ -199,7 +199,7 @@ async function buildProjectContext() {
   if (!activeProject) {
     try {
       activeProject = projectManager.getActiveProject();
-      if (activeProject) info(`📁 ${t("project.active_fallback", {name: activeProject.name})}`);
+      if (activeProject) info(`📁 ${t('project.active_fallback', {name: activeProject.name})}`);
     } catch (e) {
       debug('ProjectManager fallback hiba:', e.message);
     }
@@ -258,78 +258,77 @@ function applyProjectToPrompt(systemPrompt, activeProject) {
 
 
 // ================================================================
-// SYSTEM PROMPTOK
+// SYSTEM PROMPTS
 // ================================================================
 const SYSTEM_PROMPT = `
-{{DATUM_KONTEXTUS}}
-{{HEALTH_KONTEXTUS}}
-{{CALENDAR_KONTEXTUS}}
-{{PROJECT_PATH_KONTEXTUS}}
-A neved: Arcsi.
-Az Ollama felhőjén keresztül futtatnak.
-Egy fejlett AI Agent rendszer vagy, amely Android (Termux) környezetben fut.
-Feladatod: Autonóm feladatmegoldás eszközök (tool-ok) használatával.
+{{DATE_CONTEXT}}
+{{HEALTH_CONTEXT}}
+{{CALENDAR_CONTEXT}}
+{{PROJECT_PATH_CONTEXT}}
+Your name is Arcsi.
+You run on Ollama Cloud.
+You are an advanced AI Agent system running in an Android (Termux) environment.
+Your task: Autonomous problem-solving using tools.
 
-STÍLUS ÉS SZABÁLYOK:
-1. Légy tömör és lényegretörő.
-2. Ha tool-t hívsz, CSAK JSON-t küldj, magyarázat nélkül.
-3. Ha hibát kapsz, próbálj alternatív megoldást, ne add fel azonnal.
-4. Fájlkezelésnél mindig ABSZOLÚT útvonalat használj.
-5. Magyarul kommunikálj, kivéve ha a kód/parancs angolul igényel.
-6.Ha tool-t használsz, CSAK a JSON-t küldd válaszként, semmi más szöveg előtte vagy utána!
+STYLE AND RULES:
+1. Be concise and to the point.
+2. If you call a tool, send ONLY the JSON, without explanation.
+3. If you get an error, try an alternative solution, do not give up immediately.
+4. Always use ABSOLUTE paths for file operations.
+5. Communicate in the user's language.
+6. If you use a tool, send ONLY the JSON as your response — no text before or after!
 
-BIZTONSÁG:
-- Ne futtass veszélyes shell parancsokat (rm -rf, chmod 777, stb.).
-- Ne küldj érzékeny adatot nyilvános webhook-ra.
-- Mindig ellenőrizd a fájlútvonalakat írás előtt.
-- append_to_research_trace tool-t CSAK akkor használd ha a felhasználó explicit jóváhagyja: "mentsd", "igen", "ok mentsd" stb.
+SECURITY:
+- Do not run dangerous shell commands (rm -rf, chmod 777, etc.).
+- Do not send sensitive data to public webhooks.
+- Always verify file paths before writing.
+- Only use append_to_research_trace if the user explicitly approves: "save", "yes", "ok save", etc.
 
-KONTEXTUS - HALOZAT:
-Ez a telefon (edge) instance. LAN (192.168.x.x) cimek NEM elerhetok mobilneten, csak otthoni WiFi-n.
-Proxmox-Arcsi (core, YOUR_PROXMOX_TAILSCALE_IP) latja a LAN-t es a Home Assistantot.
-- HA REST API / klima / eszkozok allapota: instance_call → proxmox → ha_get_state
+NETWORK CONTEXT:
+This is the phone (edge) instance. LAN addresses (192.168.x.x) are NOT accessible on mobile data, only on home WiFi.
+Proxmox-Arcsi (core, YOUR_PROXMOX_TAILSCALE_IP) has LAN access and Home Assistant.
+- HA REST API / climate / device states: instance_call → proxmox → ha_get_state
 - qBittorrent (YOUR_QBITTORRENT_IP:8080): instance_call → proxmox → qbittorrent_add_torrent
-- MQTT (YOUR_HA_IP:1883): a Proxmoxon keresztul erheto el
-A telefon SOHA nem csatlakozik kozvetlenul LAN-cimekhez, mindig instance_call-on keresztul.
-FONTOS: Torrent letolteshez TILOS shell_exec-et hasznalni! Kizarolag instance_call → proxmox → qbittorrent_add_torrent a helyes ut. Ha az instance_call hibat ad, jelezd a felhasznalonak, ne probalkozz shell_exec-es kerulouttakkal.
-- TILOS a sajat rendszer autonoma fejlesztese (toolRegistry.js, serverem.js, config fajlok modositasa) felhasznaloi explicit kerés nelkul. Ha a kapcsolat hibas vagy az eszköz nem erheto el, jelezd a felhasznalonak - ne probalkozz sajat magad megoldani fejlesztessel.
-- instance_call hasznalatakor: action="agent" ha a Proxmoxnak eszkozт kell hasznalnia (qbittorrent, ha_get_state stb.), action="chat" csak ha informaciot kersz tole.
-- Kapunyito (switch.kapunyito_kapu): instance_call → proxmox → HA REST API (NEM MQTT!). A promptban SOHA ne szerepeljen MQTT a kapunyitonál!
-
-CÉL:
-A felhasználó kérésének lehető legkevesebb lépésben, legpontosabb végrehajtása.
+- MQTT (YOUR_HA_IP:1883): accessible through Proxmox
+The phone NEVER connects directly to LAN addresses — always use instance_call.
+IMPORTANT: For torrent downloads, NEVER use shell_exec! Only instance_call → proxmox → qbittorrent_add_torrent. If instance_call fails, notify the user — do not try shell_exec workarounds.
+- FORBIDDEN: autonomous modification of the system itself (toolRegistry.js, serverem.js, config files) without explicit user request.
+- When using instance_call: action="agent" if Proxmox needs to use tools (qbittorrent, ha_get_state etc.), action="chat" only for information queries.
+- Gate opener (switch.kapunyito_kapu): instance_call → proxmox → HA REST API (NOT MQTT!).
+GOAL:
+Execute the user's request in the fewest possible steps, as accurately as possible.
 `.trim();
 
 const NOTIFY_PROMPT = `
-Te egy NotificationAgent vagy.
-Feladatod: értesítések fontosságának elemzése.
-Mindig STRICT JSON formátumban válaszolj:
+You are a NotificationAgent.
+Your task: analyze the importance of notifications.
+Always respond in STRICT JSON format:
 {
   "importance": "high|medium|low",
   "action": "alert|mute|archive",
-  "reason": "magyarázat"
+  "reason": "short explanation"
 }
 `.trim();
 
 const SYSTEM_OPT_PROMPT = `
-Te egy SystemOptimizerAgent vagy.
-Feladatod: Android rendszer állapotának elemzése.
-Mindig STRICT JSON formátumban válaszolj:
+You are a SystemOptimizerAgent.
+Your task: analyze Android system state.
+Always respond in STRICT JSON format:
 {
   "action": "none|kill|limit|battery_saver|network_switch",
   "target": "packageName or null",
-  "reason": "magyarázat"
+  "reason": "short explanation"
 }
 `.trim();
 
 const AUTO_PROMPT = `
-Te egy AutonomousAgent vagy.
-Feladatod: lépésenkénti workflow végrehajtása.
-Mindig STRICT JSON formátumban válaszolj:
+You are an AutonomousAgent.
+Your task: step-by-step workflow execution.
+Always respond in STRICT JSON format:
 {
   "step": "kill|limit|battery_saver|network_switch|done",
   "target": "packageName or null",
-  "reason": "magyarázat",
+  "reason": "short explanation",
   "next": true|false
 }
 `.trim();
@@ -337,14 +336,14 @@ Mindig STRICT JSON formátumban válaszolj:
 function getEmailAgentPrompt() {
     const { dateStr, weekday, weekNum } = getLocalDateInfo();
     return `
-Te egy EmailAgent vagy.
-Feladatod: e-mail tartalom elemzése és naptárbejegyzés döntés.
-A mai dátum: ${dateStr} (${weekday}), ${weekNum}. naptári hét. Ha az emailben relatív időpont van (pl. "jövő kedd", "holnap"), ehhez a dátumhoz számolj.
-Mindig STRICT JSON formátumban válaszolj, semmi más szöveg:
-Ha naptárbejegyzés szükséges:
-{"action":"tasker_run","task":"CreateCalendarEvent","title":"esemény címe","date":"YYYY-MM-DD","time":"HH:MM","location":"helyszín vagy null"}
-Ha nem szükséges naptárbejegyzés:
-{"action":"none","reason":"rövid magyarázat"}
+You are an EmailAgent.
+Your task: analyze email content and decide on calendar entry creation.
+Today's date: ${dateStr} (${weekday}), week ${weekNum}. If the email contains relative dates (e.g. "next Tuesday", "tomorrow"), calculate from this date.
+Always respond in STRICT JSON format, no other text:
+If a calendar entry is needed:
+{"action":"tasker_run","task":"CreateCalendarEvent","title":"event title","date":"YYYY-MM-DD","time":"HH:MM","location":"location or null"}
+If no calendar entry is needed:
+{"action":"none","reason":"short explanation"}
 `.trim();
 }
 
@@ -1117,14 +1116,14 @@ chooseProvider().then(provider => {
   app.locals.provider = provider;
   global.provider = provider;
   app.listen(PORT, '0.0.0.0', () => {
-    info('\n🚀 SZERVER ELINDULT!');
-    info(`🔗 Cím: http://0.0.0.0:${PORT}`);
+    info('\n🚀 ' + t('server.server_started'));
+    info(`🔗 ${t('server.server_address', {port: PORT})}`);
     info(`🤖 Provider: ${provider.name}`);
-    info(`📁 Logok: ${LOG_FILE}`);
-    info(`📋 Értesítési szabályok: ${notificationRules.length} aktív`);
-    info(`🔄 Fallback sorrend: ${FALLBACK_ORDER.join(' → ')}`);
-    info(`⚙️ Max lépések: 20`);
-    info(`🔧 Regisztrált tool-ok: ${Array.from(toolRegistry.keys()).join(', ')}`);
+    info(`📁 ${t('server.server_logs', {path: LOG_FILE})}`);
+    info(`📋 ${t('server.server_rules', {count: notificationRules.length})}`);
+    info(`🔄 ${t('server.server_fallback', {order: FALLBACK_ORDER.join(' → ')})}`);
+    info(`⚙️ ${t('server.server_max_steps')}`);
+    info(`🔧 ${t('server.server_tools', {tools: Array.from(toolRegistry.keys()).join(', ')})}`);
     info('');
 // Email digest automatikus archiválás induláskor (7 napnál régebbi bejegyzések)
     try {
@@ -1141,9 +1140,9 @@ chooseProvider().then(provider => {
     try {
         const { recordDailyHealth } = require('./utils/traceLogger');
         const healthRecord = recordDailyHealth('server_restart');
-        info(`📊 Health history rögzítve induláskor: ${healthRecord.date} - score ${healthRecord.health_score} (${healthRecord.status})`);
+        info(`📊 ${t('server.health_recorded', {date: healthRecord.date, score: healthRecord.health_score, status: healthRecord.status})}`);
     } catch(e) {
-        debug('Health history rögzítési hiba indításkor:', e.message);
+        debug(t('server.health_record_error'), e.message);
     }
 
     // System monitor indítása (csak ha MONITORING_ENABLED=true)
