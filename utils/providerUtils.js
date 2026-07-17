@@ -74,7 +74,7 @@ async function callWithFallback(messages, initialProvider, stream = false) {
 
     for (let provider of providersToTry) {
         try {
-            info(`🔄 Próbálkozás: ${provider.name}`);
+            info(`🔄 ${t('chat.provider_trying', {provider: provider.name})}`);
             const timeout = (provider.api_key === 'local') ? 600000 : 180000;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => {
@@ -110,14 +110,14 @@ async function callWithFallback(messages, initialProvider, stream = false) {
 
             if (!response.ok) {
                 const errText = await response.text();
-                debug(`⚠️ ${provider.name} hiba ${response.status}: ${errText.substring(0, 200)}`);
+                debug(`⚠️ ${t('chat.provider_error', {code: response.status, error: errText.substring(0, 200)})}`);
                 lastError = new Error(`${provider.name} hiba: ${response.status}`);
                 logFallbackTrace(provider.name, response.status === 429 ? '429_rate_limit' : `http_${response.status}`);
                 continue;
             }
 
             const text = await response.text();
-            info(`✅ Sikeres válasz: ${provider.name}`);
+            info(`✅ ${t('chat.provider_success', {provider: provider.name})}`);
 
             if (text.trim().startsWith('data: ')) {
                 const lines = text.split('\n');
@@ -156,7 +156,7 @@ async function callWithFallback(messages, initialProvider, stream = false) {
                 debug(`⏱️ ${provider.name} timeout`);
                 logFallbackTrace(provider.name, 'timeout');
             } else {
-                debug(`❌ ${provider.name} nem elérhető: ${error.message}`);
+                debug(`❌ ${provider.name}: ${error.message}`);
                 if (!error.message.startsWith('Invalid JSON')) {
                     logFallbackTrace(provider.name, 'other_error');
                 }

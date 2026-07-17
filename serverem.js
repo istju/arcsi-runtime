@@ -192,7 +192,7 @@ async function buildProjectContext() {
       info(`📁 ${t('project.active_runtime', {name: activeProject.name})}`);
     }
   } catch (e) {
-    debug('Runtime daemon nem elérhető:', e.message);
+    debug('Runtime daemon unavailable:', e.message);
   }
 
   // 2. Fallback: projectManager
@@ -743,7 +743,7 @@ app.post('/agent/rollback', requireAuth, async (req, res) => {
 // ================================================================
 app.get('/runtime/status', async (req, res) => {
   const status = await runtimeClient.getStatus();
-  res.json(status || { error: 'Runtime daemon nem elérhető' });
+  res.json(status || { error: 'Runtime daemon unavailable' });
 });
 
 // Debug
@@ -807,7 +807,7 @@ app.post('/chat', async (req, res) => {
   const keepAlive = setInterval(() => res.write(' '), 8000);
 
   try {
-    info(`📤 Chat kérés: ${initialProvider.name} | session: ${sessionId} | kép: ${image ? 'igen' : 'nem'}`);
+    info(`📤 ${t('chat.request', {provider: initialProvider.name, session: sessionId})} | image: ${image ? 'yes' : 'no'}`);
 
     // Alap rendszerprompt
     const { dateStr: todayStr, weekday: todayWeekday, weekNum: todayWeekNum } = getLocalDateInfo();
