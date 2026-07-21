@@ -6,6 +6,25 @@ const SETTINGS = require('../config/settings');
 const { info, debug } = require('./logger');
 const { t } = require('./i18n');
 
+function parseProviderResponse(text, provider) {
+    if (text.trim().startsWith('data: ')) {
+        const lines = text.split('\n');
+        let fullContent = '';
+        for (const line of lines) {
+            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                try {
+                    const json = JSON.parse(line.slice(6));
+                    fullContent += json?.choices?.[0]?.delta?.content ||
+                                  json?.choices?.[0]?.message?.content || '';
+                } catch(e) {}
+            }
+        }
+        return { response: { ok: true, json: async () => ({ choices: [{ message: { content: fullContent, role: 'assistant' } }] }) }, providerUsed: provider };
+    }
+    const data = JSON.parse(text);
+    return { response: { ok: true, json: async () => data }, providerUsed: provider };
+}
+
 function chooseProvider() {
     return new Promise((resolve) => {
         const defaultKey = process.env.DEFAULT_PROVIDER_NUM || SETTINGS.DEFAULT_PROVIDER_NUM || '4';
@@ -112,6 +131,29 @@ async function callWithFallback(messages, initialProvider, stream = false) {
             if (!response.ok) {
                 const errText = await response.text();
                 debug(`⚠️ ${t('chat.provider_error', {code: response.status, error: errText.substring(0, 200)})}`);
+                // 429: Ollama API key rotation
+                if (response.status === 429 && provider.format === 'ollama') {
+                    const keys = [
+                        process.env.OLLAMA_API_KEY,
+                        process.env.OLLAMA_API_KEY_2,
+                        process.env.OLLAMA_API_KEY_3
+                    ].filter(k => k && k !== provider.api_key);
+                    for (const altKey of keys) {
+                        debug(`🔑 Ollama API key rotation: trying alternate key`);
+                        try {
+                            const altResponse = await fetch(provider.api_url, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + altKey },
+                                body: JSON.stringify(body)
+                            });
+                            if (altResponse.ok) {
+                                info(`✅ Success: ${provider.name} (alt key)`);
+                                const altText = await altResponse.text();
+                                return parseProviderResponse(altText, provider);
+                            }
+                        } catch(e) { debug(`❌ Alt key error: ${e.message}`); }
+                    }
+                }
                 lastError = new Error(`${provider.name} hiba: ${response.status}`);
                 logFallbackTrace(provider.name, response.status === 429 ? '429_rate_limit' : `http_${response.status}`);
                 continue;
