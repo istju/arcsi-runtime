@@ -45,6 +45,34 @@ const projectManager = new ProjectManager(__dirname);
 
 const app = express();
 const PORT = SETTINGS.PORT;
+
+// ================================================================
+// CAPABILITY MANIFEST - Better Agent / MCP integration
+// ================================================================
+app.get('/capabilities', (req, res) => {
+    const { toolRegistry } = require('./tools/toolRegistry');
+    res.json({
+        runtime: 'arcsi-runtime',
+        version: '1.1.0',
+        host: process.env.ARCSI_HOST_TYPE || 'generic',
+        tools: Array.from(toolRegistry.keys()),
+        environment: {
+            node: process.version,
+            platform: process.platform,
+            arch: process.arch
+        },
+        features: {
+            agent_mode: true,
+            sandbox: true,
+            research_trace: true,
+            instance_call: !!process.env.PROXMOX_ARCSI_URL,
+            home_assistant: !!process.env.HA_URL,
+            calendar: true
+        },
+        active_project: null // filled at request time
+    });
+});
+
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
