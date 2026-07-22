@@ -60,10 +60,12 @@ Json
 capabilities — what is available, why, and from what source.
 
 Json
-"communication": {
-  "channels": { "http": true, "mcp": false, "websocket": false },
-  "preferred_channel": "http",
-  "latency_class": "interactive"
+"capabilities": {
+  "notifications": { "available": true, "source": "android_system" },
+  "tasker": { "available": true, "source": "android_automation" },
+  "home_assistant": { "available": false, "reason": "not_configured" },
+  "sandbox": { "available": true, "source": "local_filesystem" },
+  "research_trace": { "available": true, "source": "project_context" }
 }
 
 communication — how this runtime prefers to be reached.
