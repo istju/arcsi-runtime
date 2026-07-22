@@ -163,3 +163,5 @@ It is earned through interaction with the environment.
 Every Arcsi instance writes its own passport by living in its world.
 
 
+A Runtime Passport is not written before deployment.
+It is written by the runtime itself, through everyday operation.
