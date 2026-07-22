@@ -49,27 +49,61 @@ const PORT = SETTINGS.PORT;
 // ================================================================
 // CAPABILITY MANIFEST - Better Agent / MCP integration
 // ================================================================
-app.get('/capabilities', (req, res) => {
+app.get('/capabilities', async (req, res) => {
     const { toolRegistry } = require('./tools/toolRegistry');
+
+    // Auto-detect role from environment
+    const hasHA = !!process.env.HA_URL;
+    const hasMQTT = !!process.env.MQTT_URL;
+    const hasTasker = process.platform === 'android';
+    const hasProxmox = !!process.env.PROXMOX_ARCSI_URL;
+
+    let role = 'generic-runtime';
+    let environment = process.env.ARCSI_HOST_TYPE || process.platform;
+    if (process.platform === 'android') {
+        role = 'edge-runtime';
+        environment = 'android';
+    } else if (hasHA || hasMQTT) {
+        role = 'core-runtime';
+        environment = 'debian-lxc';
+    }
+
+    // Active project
+    let activeProject = null;
+    try {
+        const runtimeData = await runtimeClient.getActiveProject();
+        if (runtimeData?.context?.project_name) {
+            activeProject = runtimeData.context.project_name;
+        }
+    } catch(e) {}
+
     res.json({
-        runtime: 'arcsi-runtime',
-        version: '1.1.0',
-        host: process.env.ARCSI_HOST_TYPE || 'generic',
+        identity: {
+            runtime: 'arcsi-runtime',
+            version: '1.1.0',
+            environment: environment,
+            role: role
+        },
+        capabilities: {
+            notifications: process.platform === 'android',
+            tasker: process.platform === 'android',
+            home_assistant: hasHA,
+            mqtt: hasMQTT,
+            qbittorrent: !!process.env.QBITTORRENT_URL,
+            calendar: true,
+            sandbox: true,
+            research_trace: true,
+            instance_call: hasProxmox,
+            agent_mode: true
+        },
         tools: Array.from(toolRegistry.keys()),
         environment: {
             node: process.version,
             platform: process.platform,
             arch: process.arch
         },
-        features: {
-            agent_mode: true,
-            sandbox: true,
-            research_trace: true,
-            instance_call: !!process.env.PROXMOX_ARCSI_URL,
-            home_assistant: !!process.env.HA_URL,
-            calendar: true
-        },
-        active_project: null // filled at request time
+        active_project: activeProject,
+        manifest_version: 3
     });
 });
 
