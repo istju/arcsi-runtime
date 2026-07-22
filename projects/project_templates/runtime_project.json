@@ -1,17 +1,17 @@
 {
   "name": "runtime_project",
-  "description": "Arcsi Runtime alapú projekt - tartalmazza a teljes infrastruktúra kontextust",
+  "description": "Arcsi Runtime–based project — contains the full infrastructure context",
   "version": "1.0",
   "runtime_context": {
     "topology": {
-      "phone": "Edge instance (Policy Layer) - Android telefon, Termux, port 3000, Tailscale: YOUR_PHONE_TAILSCALE_IP",
-      "proxmox": "Core instance (Interpretation Layer) - Proxmox LXC, LAN: YOUR_PROXMOX_LAN_IP, Tailscale: YOUR_PROXMOX_TAILSCALE_IP"
+      "phone": "Edge instance (Policy Layer) — Android phone, Termux, port 3000, Tailscale: YOUR_PHONE_TAILSCALE_IP",
+      "proxmox": "Core instance (Interpretation Layer) — Proxmox LXC, LAN: YOUR_PROXMOX_LAN_IP, Tailscale: YOUR_PROXMOX_TAILSCALE_IP"
     },
     "communication": "instance_call tool (RPC over Tailscale)",
     "boundary_rules": [
-      "Email logika, notification_rules.json - MINDIG a telefonon marad",
-      "HA kapcsolat, MQTT, qBittorrent - Proxmox feladata",
-      "LAN cimek (192.168.x.x) - csak Proxmoxon keresztul erhetok el"
+      "Email logic, notification_rules.json — ALWAYS stays on the phone",
+      "Home Assistant, MQTT, qBittorrent — handled by Proxmox",
+      "LAN addresses (192.168.x.x) — only reachable through Proxmox"
     ],
     "available_services": {
       "home_assistant": "http://YOUR_HA_IP:8123",
@@ -19,17 +19,17 @@
       "mqtt": "YOUR_MQTT_IP:1883"
     }
   },
-  "system_prompt": "Ez egy Arcsi Runtime alapú projekt. A rendszer split-brain modellen működik: Proxmox = Interpretation (MI EZ?), Telefon = Policy (MIT CSINÁLJAK VELE?). Minden fejlesztésnél tartsd szem előtt a blueprintet: blueprints/arcsi_dataflow_graph_v0.1.png",
+  "system_prompt": "This is an Arcsi Runtime–based project. The system operates on a split‑brain model: Proxmox = Interpretation (WHAT IS THIS?), Phone = Policy (WHAT SHOULD I DO WITH IT?). The phone is where decisions live. Proxmox is where they execute. In every development step, keep the blueprint in mind: blueprints/arcsi_dataflow_graph_v0.1.png",
   "memory_layers": {
-    "projekt_memoria": "context.json - Mit tudunk?",
-    "fejlesztesi_memoria": "event_log.json + logProgress() - Hogyan jutottunk ide?",
-    "labor_notebook": "Minden felismerés, döntés, zsákutca rögzítve"
+    "project_memory": "context.json — What do we know?",
+    "development_memory": "event_log.json + logProgress() — How did we get here?",
+    "lab_notebook": "Every insight, decision, and dead end recorded"
   },
   "methodological_principles": [
-    "Ne akadályként, hanem lehetőségként tekintsünk a problémákra",
-    "Ismétlődő minta → emeld architektúrává (többször + függetlenül)",
-    "Először stabilizálj, utána strukturálj - nem fordítva",
-    "A spirál: Teszt → Felismerés → Megoldás → Tervezés → Új perspektíva"
+    "Treat every obstacle as a design signal",
+    "Repeated pattern → elevate it into architecture (multiple times + independently)",
+    "First stabilize, then structure — never the other way around",
+    "The spiral: Test → Insight → Solution → Design → New perspective"
   ],
   "created_at": "2026-07-06T00:00:00"
 }

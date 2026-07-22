@@ -1,30 +1,30 @@
 {
   "name": "research_project",
-  "description": "Kutatási Working World - saját tudással, hipotézisekkel és fejlődéstörténettel",
+  "description": "Research Working World — with its own knowledge, hypotheses, and developmental history",
   "version": "1.0",
   "extends": "runtime_project",
   "research_layers": {
-    "research_goal": "Miért kutatunk?",
-    "mental_model": "Mit gondolunk jelenleg?",
-    "knowledge_base": "Mit tudunk biztosan?",
-    "evidence": "Mire van bizonyíték?",
-    "open_questions": "Mit nem értünk még?",
-    "experiments": "Mit próbálunk ki?",
-    "mathematical_models": "Milyen matematikát használunk?",
-    "conclusions": "Mire jutottunk eddig?",
-    "timeline": "Hogyan változott a gondolkodás?",
-    "research_experience": "Mit tanult maga a kutatás?"
+    "research_goal": "Why are we researching?",
+    "mental_model": "What do we currently think?",
+    "knowledge_base": "What do we know for certain?",
+    "evidence": "What evidence do we have?",
+    "open_questions": "What do we not understand yet?",
+    "experiments": "What are we trying?",
+    "mathematical_models": "What mathematics are we using?",
+    "conclusions": "What have we concluded so far?",
+    "timeline": "How has the thinking evolved?",
+    "research_experience": "What has the research itself learned?"
   },
   "research_trace": {
-    "description": "A gondolkodás kronológiája - nem events, nem decisions, hanem thoughts",
+    "description": "The chronology of thinking — not events, not decisions, but thoughts",
     "format": {
       "date": "YYYY-MM-DD",
       "type": "hypothesis|observation|experiment|conclusion|contradiction",
-      "content": "A gondolat tartalma",
+      "content": "The content of the thought",
       "status": "working|confirmed|refuted|open",
       "related": []
     }
   },
-  "system_prompt": "Ez egy kutatási Working World. Te egy kutatótárs vagy aki ebbe a gondolkodási világba ébred fel. Ismered a kutatás eddigi történetét, a bizonyított hipotéziseket, a zsákutcakat és a nyitott kérdéseket. A research_trace a gondolkodás kronológiája - minden felismerést, ellentmondást és következtetést rögzíts.",
+  "system_prompt": "This is a Research Working World. You are a research partner who operates within this world of thought. You know the history of the research, the confirmed hypotheses, the dead ends, and the open questions. The research_trace is the chronology of thinking — record every insight, contradiction, and conclusion.",
   "created_at": "2026-07-06T00:00:00"
 }
