@@ -57,15 +57,29 @@ app.get('/capabilities', async (req, res) => {
     const hasMQTT = !!process.env.MQTT_URL;
     const hasTasker = process.platform === 'android';
     const hasProxmox = !!process.env.PROXMOX_ARCSI_URL;
+    const hasQBittorrent = !!process.env.QBITTORRENT_URL;
+    const isAndroid = process.platform === 'android';
 
+    // Derive role from environment signals
+    const derivedFrom = [];
     let role = 'generic-runtime';
     let environment = process.env.ARCSI_HOST_TYPE || process.platform;
-    if (process.platform === 'android') {
+
+    if (isAndroid) {
+        derivedFrom.push('android', 'mobile');
+        if (hasTasker) derivedFrom.push('tasker');
+        derivedFrom.push('notifications');
         role = 'edge-runtime';
         environment = 'android';
     } else if (hasHA || hasMQTT) {
+        derivedFrom.push('home_assistant', 'infrastructure');
+        if (hasMQTT) derivedFrom.push('mqtt');
+        if (hasQBittorrent) derivedFrom.push('qbittorrent');
+        derivedFrom.push('long_running_services');
         role = 'core-runtime';
-        environment = 'debian-lxc';
+        environment = process.env.ARCSI_HOST_TYPE || 'linux';
+    } else {
+        derivedFrom.push('generic', process.platform);
     }
 
     // Active project
@@ -82,19 +96,20 @@ app.get('/capabilities', async (req, res) => {
             runtime: 'arcsi-runtime',
             version: '1.1.0',
             environment: environment,
-            role: role
+            role: role,
+            derived_from: derivedFrom
         },
         capabilities: {
-            notifications: process.platform === 'android',
-            tasker: process.platform === 'android',
-            home_assistant: hasHA,
-            mqtt: hasMQTT,
-            qbittorrent: !!process.env.QBITTORRENT_URL,
-            calendar: true,
-            sandbox: true,
-            research_trace: true,
-            instance_call: hasProxmox,
-            agent_mode: true
+            notifications: { available: isAndroid, source: isAndroid ? 'android_system' : null },
+            tasker: { available: isAndroid, source: isAndroid ? 'android_automation' : null },
+            home_assistant: { available: hasHA, source: hasHA ? 'env_configured' : null, reason: hasHA ? null : 'not_configured' },
+            mqtt: { available: hasMQTT, source: hasMQTT ? 'env_configured' : null, reason: hasMQTT ? null : 'not_configured' },
+            qbittorrent: { available: hasQBittorrent, source: hasQBittorrent ? 'env_configured' : null, reason: hasQBittorrent ? null : 'not_configured' },
+            calendar: { available: true, source: 'google_api' },
+            sandbox: { available: true, source: 'local_filesystem' },
+            research_trace: { available: true, source: 'project_context' },
+            instance_call: { available: hasProxmox, source: hasProxmox ? 'env_configured' : null, reason: hasProxmox ? null : 'not_configured' },
+            agent_mode: { available: true, source: 'tool_registry' }
         },
         tools: Array.from(toolRegistry.keys()),
         environment: {
