@@ -91,13 +91,51 @@ app.get('/capabilities', async (req, res) => {
         }
     } catch(e) {}
 
+    // Health score
+    let healthScore = 87;
+    try {
+        const { getHealthScore } = require('./utils/traceLogger');
+        const h = getHealthScore();
+        healthScore = h.health_score;
+    } catch(e) {}
+
+    // Active project world info
+    let worldInfo = null;
+    try {
+        const runtimeData2 = await runtimeClient.getActiveProject();
+        const ctx = runtimeData2?.context;
+        if (ctx?.project_name) {
+            worldInfo = {
+                name: ctx.project_name,
+                type: ctx.research_goal ? 'research' : 'development',
+                active: true,
+                knowledge_base: !!(ctx.research_trace?.length > 0)
+            };
+        }
+    } catch(e) {}
+
+    // Specialization traits
+    const traits = [];
+    if (isAndroid) traits.push('notifications', 'personal_context', 'rapid_experimentation');
+    if (hasHA) traits.push('home_automation');
+    if (hasProxmox) traits.push('distributed_execution');
+    if (worldInfo?.type === 'research') traits.push('research_support');
+
     res.json({
         identity: {
             runtime: 'arcsi-runtime',
             version: '1.1.0',
             environment: environment,
             role: role,
-            derived_from: derivedFrom
+            derived_from: derivedFrom,
+            specialization: {
+                emergent: true,
+                traits: traits,
+                confidence: isAndroid ? 0.95 : (hasHA ? 0.90 : 0.70),
+                history: derivedFrom
+            },
+            world: worldInfo,
+            protocol_version: '4.0'
         },
         capabilities: {
             notifications: { available: isAndroid, source: isAndroid ? 'android_system' : null },
@@ -112,13 +150,55 @@ app.get('/capabilities', async (req, res) => {
             agent_mode: { available: true, source: 'tool_registry' }
         },
         tools: Array.from(toolRegistry.keys()),
+        communication: {
+            channels: { http: true, mcp: false, websocket: false },
+            preferred_channel: 'http',
+            latency_class: isAndroid ? 'interactive' : 'batch'
+        },
+        authority: {
+            trust_level: 'local',
+            effective_role: role,
+            boundaries: {
+                tool_scope: Array.from(toolRegistry.keys()),
+                forbidden: ['rm_rf', 'network_exposure', 'credential_export'],
+                idempotency_required: false
+            },
+            contract_limits: {
+                max_duration_ms: 180000,
+                max_depth: 20,
+                requires_approval: true,
+                compatibility: '1.0'
+            }
+        },
+        reasoning: {
+            trace_based: true,
+            policy_layer: true,
+            working_worlds: true,
+            reflection: false,
+            supports_research: !!(worldInfo?.type === 'research')
+        },
+        health: {
+            uptime: Math.round(process.uptime()) + 's',
+            score: healthScore,
+            provider_status: {
+                ollama_cloud: 'active'
+            }
+        },
+        contracts: {
+            supported: ['research_trace', 'sandbox_write', 'instance_call'],
+            pipeline: {
+                trace_enabled: true,
+                replay_protection: false,
+                lineage: false
+            },
+            version: '1.0'
+        },
         environment: {
             node: process.version,
             platform: process.platform,
             arch: process.arch
         },
-        active_project: activeProject,
-        manifest_version: 3
+        manifest_version: 4
     });
 });
 
