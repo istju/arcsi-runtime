@@ -12,6 +12,19 @@
 ![Node](https://img.shields.io/badge/node-18%2B-brightgreen)
 
 
+![MCP Ready](https://img.shields.io/badge/MCP-ready-purple)
+
+
+
+
+![Runtime Passport](https://img.shields.io/badge/Runtime%20Passport-v4.0-blueviolet)
+
+
+
+
+![Claude](https://img.shields.io/badge/Claude-Arcsibald-orange)
+
+
 A modular, distributed AI runtime for personal automation, research, and autonomous workflows.
 
 Arcsi Runtime is an experimental AI operating environment built around a simple idea:
