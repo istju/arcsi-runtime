@@ -14,6 +14,13 @@
 ![Runtime Passport](https://img.shields.io/badge/Runtime%20Passport-v4.0-blueviolet)
 ![Claude](https://img.shields.io/badge/Claude-Arcsibald-orange)
 
+<p align="center">
+  <em>
+    "Arcsi Runtime is not a product.<br>
+    It is an experiment in building a system<br>
+    that learns what it is by living."
+  </em>
+</p>
 
 A modular, distributed AI runtime for personal automation, research, and autonomous workflows.
 
