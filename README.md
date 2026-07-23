@@ -10,18 +10,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Termux-orange)
 ![Node](https://img.shields.io/badge/node-18%2B-brightgreen)
-
-
 ![MCP Ready](https://img.shields.io/badge/MCP-ready-purple)
-
-
-
-
 ![Runtime Passport](https://img.shields.io/badge/Runtime%20Passport-v4.0-blueviolet)
-
-
-
-
 ![Claude](https://img.shields.io/badge/Claude-Arcsibald-orange)
 
 
