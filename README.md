@@ -392,6 +392,32 @@ Special thanks to:
 
 ---
 
+## MCP Gateway
+
+Arcsi Runtime includes an MCP (Model Context Protocol) gateway that exposes its tools to external supervisors like Better Agent.
+
+Setup:
+
+cd mcp-gateway
+npm install
+
+Usage:
+
+# Start the MCP gateway (stdio transport)
+node mcp-gateway.js
+
+# Test tools/list
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node mcp-gateway.js
+
+What it exposes
+All tools from the Runtime Passport authority.boundaries.tool_scope
+Resources: arcsi://research/trace and arcsi://system/health
+Policy enforcement: forbidden patterns checked before execution
+World context: every tool call carries the active project name
+The gateway reads the live /capabilities endpoint on startup — tool scope and authority boundaries are always up to date.
+See VISION.md for the Runtime Passport architecture.
+
+
 ## Support the Project
 
 If Arcsi Runtime helped you, inspired you, or saved you time, consider buying me a coffee.
