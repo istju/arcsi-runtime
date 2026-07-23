@@ -392,31 +392,164 @@ Special thanks to:
 
 ---
 
-## MCP Gateway
+## MCP Gateway Architecture
 
-Arcsi Runtime includes an MCP (Model Context Protocol) gateway that exposes its tools to external supervisors like Better Agent.
+The MCP Gateway is not an independent subsystem.
 
-Setup:
+It is the live projection of the [Runtime Passport](ca://s?q=Explain_Runtime_Passport) into the [Model Context Protocol](ca://s?q=Explain_Model_Context_Protocol) (MCP).
 
-cd mcp-gateway
-npm install
+Rather than defining its own capabilities, the gateway continuously reflects the identity, authority, world context, reasoning model, and contracts of the Arcsi Runtime instance it represents.
 
-Usage:
+---
 
-# Start the MCP gateway (stdio transport)
-node mcp-gateway.js
+## Architecture Overview
 
-# Test tools/list
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node mcp-gateway.js
+Arcsi Runtime
+│
+├── /capabilities   ← Runtime Passport (live identity)
+│
+└── MCP Gateway
+    │
+    ├── tool_scope      (Passport.authority.boundaries.tool_scope)
+    ├── forbidden       (Passport.authority.boundaries.forbidden)
+    ├── world context   (Passport.world.name)
+    ├── reasoning       (Passport.reasoning.*)
+    ├── resources       (arcsi://research/trace,
+    │                    arcsi://system/health)
+    └── MCP stdio transport
 
-What it exposes
-All tools from the Runtime Passport authority.boundaries.tool_scope
-Resources: arcsi://research/trace and arcsi://system/health
-Policy enforcement: forbidden patterns checked before execution
-World context: every tool call carries the active project name
-The gateway reads the live /capabilities endpoint on startup — tool scope and authority boundaries are always up to date.
-See VISION.md for the Runtime Passport architecture.
+The gateway does not define capabilities.
 
+It reflects the runtime's identity.
+
+---
+
+## Runtime Passport → MCP Mapping
+
+Runtime Passport | MCP Gateway Behavior
+"identity.role" | Determines the effective runtime role during execution
+"identity.specialization" | Advertises emergent traits to external supervisors
+"authority.boundaries.tool_scope" | Dynamically builds the "tools/list" output
+"authority.boundaries.forbidden" | Enforced before every tool execution
+"world.name" | Injected into every tool invocation
+"world.type" | Determines resource namespaces (for example "arcsi://research")
+"reasoning.trace_based" | Enables trace-aware research tools
+"health.score" | Published through "arcsi://system/health"
+"contracts.supported" | Determines available MCP methods
+"capabilities.*.available" | Controls which tools and resources are exposed
+
+The gateway reconstructs itself on every startup by reading the current Runtime Passport.
+
+---
+
+## Tool Exposure Flow
+
+### Startup
+
+1. Read the Runtime Passport ("/capabilities")
+2. Extract the allowed tool scope
+3. Extract authority boundaries
+4. Extract the active Working World
+5. Extract reasoning capabilities
+6. Dynamically build the MCP registry
+
+---
+
+## Execution
+
+Arcsi evaluates every request in the following order:
+
+Identity  
+    ↓  
+World  
+    ↓  
+Authority  
+    ↓  
+Action
+
+1. Identity  
+Determine which runtime is executing the request and which role it has naturally developed.
+
+2. World  
+Inject the active Working World.  
+The runtime must first know where it is before evaluating any request.  
+Policy evaluation only has meaning inside a world.
+
+3. Authority  
+Verify permissions, forbidden patterns, contract limits, and approval requirements.
+
+4. Action  
+Delegate execution to Arcsi Runtime.  
+The action always happens inside the active world.
+
+This ordering reflects the Runtime Passport philosophy:
+
+Identity → World → Authority → Action
+
+---
+
+## MCP Resources
+
+"arcsi://research/trace"
+
+- Chronological reasoning history of the active Research Working World  
+- Enabled by "Passport.reasoning.trace_based"  
+- Writable through "append_to_research_trace"
+
+---
+
+"arcsi://system/health"
+
+- Runtime health  
+- Runtime uptime  
+- Provider status  
+- Derived directly from "Passport.health"  
+- Read-only for supervisors
+
+---
+
+## MCP JSON Example
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list",
+  "params": {}
+}
+
+---
+
+## Design Philosophy
+
+Traditional MCP servers usually expose tools.
+
+Arcsi exposes a runtime.
+
+The Runtime Passport is therefore not simply a capability manifest.
+
+It is a description of an autonomous participant:
+
+- who it is,
+- where it belongs,
+- how it reasons,
+- what it is trusted to do,
+- and what it has naturally become.
+
+The gateway simply projects that identity into MCP.
+
+---
+
+## Final Statement
+
+The MCP Gateway never invents capabilities.
+
+Every startup reconstructs the gateway directly from the Runtime Passport.
+
+The gateway does not define Arcsi.
+
+It reflects Arcsi exactly as it exists at that moment.
+
+---
 
 ## Support the Project
 
