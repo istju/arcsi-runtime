@@ -886,6 +886,72 @@ app.post('/trace/anomalies/action', requireAuth, (req, res) => {
 });
 
 // ================================================================
+// EXECUTE ENDPOINT - MCP Gateway integration
+// ================================================================
+app.post('/execute', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const key = authHeader?.replace('Bearer ', '');
+    if (key !== process.env.ARCSI_LOCAL_KEY) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { tool, params, context } = req.body;
+    if (!tool) return res.status(400).json({ error: 'Missing tool name' });
+
+    const toolFn = toolRegistry.get(tool);
+    if (!toolFn) return res.status(404).json({ error: `Tool not found: ${tool}` });
+
+    try {
+        const result = await toolFn(params || {});
+        info(`🔌 MCP execute: ${tool} | project: ${context?.project || 'none'}`);
+        res.json({ success: true, tool, result, context });
+    } catch(e) {
+        res.status(500).json({ success: false, tool, error: e.message });
+    }
+});
+
+app.get('/trace/health', requireAuth, (req, res) => {
+    const { getHealthScore } = require('./utils/traceLogger');
+    const date = req.query.date || null;
+    res.json(getHealthScore(date));
+});
+
+app.post('/trace/record-health', requireAuth, (req, res) => {
+    const { recordDailyHealth } = require('./utils/traceLogger');
+    const systemChange = req.body?.system_change || null;
+    const record = recordDailyHealth(systemChange);
+    info(`📊 Health record mentve: ${record.date} - score ${record.health_score} (${record.status})${systemChange ? ' | change: ' + systemChange : ''}`);
+    res.json(record);
+});
+
+app.get('/trace/health-history', requireAuth, (req, res) => {
+    const { getHealthHistory } = require('./utils/traceLogger');
+    const days = parseInt(req.query.days) || 30;
+    res.json({ history: getHealthHistory(days) });
+});
+
+app.get('/trace/anomalies', requireAuth, (req, res) => {
+    const { getAnomalyLog, checkAndRecordNewAnomalies } = require('./utils/traceLogger');
+    const newlyRecorded = checkAndRecordNewAnomalies();
+    if (newlyRecorded.length > 0) {
+        info(`🔍 Új anomália rögzítve: ${newlyRecorded.map(a => a.pattern).join(', ')}`);
+    }
+    res.json({ anomalies: getAnomalyLog() });
+});
+
+app.post('/trace/anomalies/action', requireAuth, (req, res) => {
+    const { recordAnomaly } = require('./utils/traceLogger');
+    const { pattern, action_taken } = req.body;
+    if (!pattern || !action_taken) {
+        return res.status(400).json({ error: 'Hiányzó pattern vagy action_taken' });
+    }
+    const entry = recordAnomaly(pattern, null, action_taken);
+    info(`📝 Anomália akció rögzítve: ${pattern} → ${action_taken}`);
+    res.json(entry);
+});
+
+
+// ================================================================
 // ROLLBACK RESTORE ENDPOINT
 // ================================================================
 app.post('/agent/rollback', requireAuth, async (req, res) => {
