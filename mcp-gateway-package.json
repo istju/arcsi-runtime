@@ -1,0 +1,13 @@
+{
+  "name": "arcsi-mcp-gateway",
+  "version": "4.0.0",
+  "description": "MCP Gateway for Arcsi Runtime - exposes Runtime Passport tools to Better Agent",
+  "type": "module",
+  "main": "mcp-gateway.js",
+  "scripts": {
+    "start": "node mcp-gateway.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
