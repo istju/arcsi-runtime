@@ -18,7 +18,9 @@
   <em>
     "Arcsi Runtime is not a product.<br>
     It is an experiment in building a system<br>
-    that discovers what it is by living."
+    that learns what it is by living —<br>
+    and preserves who it is<br>
+    by distilling experience into wisdom."
   </em>
 </p>
 
