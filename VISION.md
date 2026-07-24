@@ -1,169 +1,192 @@
-Arcsi Runtime — Vision
-From Capability Manifest to Runtime Passport
-One idea emerged during an unexpected discussion with the Better Agent project.
-Initially, Arcsi described capabilities.
-Over time, that idea evolved into something deeper.
-The Evolution
-V1 — Tool List
-The first version was straightforward.
-An instance simply reported the tools it could execute.
+## Wisdom Layer  --What Should Never Be Forgotten--
 
-Json
-{
-  "tools": ["file_read", "shell_exec", "sandbox_write"]
-}
+<p align="center">
+  <em>
+    "Age is not how long the runtime has existed.<br>
+    Age is how deeply its experiences have shaped its principles."
+  </em>
+</p>
 
-The important difference: the role is not configured manually.
-It is discovered.
-Runtime Passport
-Earlier versions of Arcsi described capabilities.
+## The Question That Changes Everything
+
+Every layer in Arcsi Runtime so far answers the same question:
+"What happened?"
+Trace records events.
+Context preserves state.
+Research Trace chronicles thinking.
+Working Worlds maintain the environment.
 Runtime Passport describes identity.
-It is not a declaration of what a runtime can execute, but a description of what it has become through its environment, responsibilities, and lived experience.
-Beyond Capability Manifest
-The evolution from Capability Manifest to Runtime Passport is not a rename.
-It is a shift in perspective.
-Capability Manifest
-Runtime Passport
-What can I execute?
-What have I become?
-Tool list
-Identity description
-Integration spec
-Participant declaration
-Configured
-Earned
-Structure
-A Runtime Passport contains six sections.
-identity — who this runtime is, what role it has developed, and how that role emerged.
+The Wisdom Layer asks a different question:
+"What should never be forgotten — even when everything else fades?"
+Why Forgetting Matters
+Most systems treat forgetting as failure.
+In Arcsi Runtime, forgetting is a necessary process.
+The details of an ESP32 WiFi dropout in 2024 are not important.
+The principle that emerged from it is.
+Forgetting is not a failure.
+It is the process that allows wisdom to emerge.
+A system that remembers everything knows a great deal.
+A system that knows what to forget has begun to develop wisdom.
 
-Json
-"identity": {
-  "runtime": "arcsi-runtime",
-  "version": "1.1.0",
-  "environment": "android",
-  "role": "edge-runtime",
-  "derived_from": ["android", "mobile", "tasker", "notifications"],
-  "specialization": {
-    "emergent": true,
-    "traits": ["notifications", "personal_context", "rapid_experimentation"],
-    "confidence": 0.85,
-    "history": ["edge_runtime", "tasker_integration"]
+---
+
+## The Distillation Chain
+
+Experience
+    ↓
+Trace          — what happened
+    ↓
+Reflection     — what it means
+    ↓
+Distillation   — what is the general principle
+    ↓
+Wisdom         — what must never be forgotten
+    ↓
+Reinterpretation — the past seen with new eyes
+    ↓
+New Question
+    ↓
+Experiment
+    ↓
+Experience
+
+This is not a pipeline.
+It is a spiral.
+It returns to the same point — but at a higher level.
+Distillation is the active step.
+It asks: is this a specific event, or a pattern?
+It decides what dissolves and what remains.
+
+---
+
+## Lessons vs. Principles
+
+A lesson always comes from a specific event.
+A principle is universal.
+
+Trace:
+ESP32 WiFi dropout → gate unavailable → false alarm sent.
+
+Reflection:
+Missing payload verification caused an incorrect notification.
+
+Distillation:
+This is not an ESP32 problem. This is a verification problem.
+
+Wisdom Principle:
+Never notify before verifying infrastructure state.
+
+The principle is now independent of ESP32, WiFi, or gates.
+It applies to every future automation decision.
+
+---
+
+## Four Categories of Wisdom
+
+Wisdom
+├── Runtime Principles
+│     How the system should behave.
+│
+├── Research Principles
+│     How to conduct research inside a Working World.
+│
+├── Collaboration Principles
+│     How to work with other runtimes and supervisors.
+│
+└── Personal Principles
+      What the human collaborator consistently stands by.
+      
+Personal Principles are the most unusual category.
+A runtime that knows its collaborator's principles does not just execute requests.
+It understands the context in which those requests are made.
+This is no longer only a tool.
+It becomes a long-term collaborator shaped by shared experience.
+
+---
+
+## Wisdom Density
+
+"wisdom": {
+  "principles": [
+    "Never notify before verifying infrastructure state.",
+    "Never restart a long-running process without checking active contracts.",
+    "When in doubt, ask for approval before writing to the research trace."
+  ],
+  "age": {
+    "working_worlds": 18,
+    "completed_contracts": 3200,
+    "research_traces": 12000,
+    "policy_revisions": 470,
+    "architectural_shifts": 9,
+    "wisdom_principles": 41
   },
-  "world": {
-    "name": "FIRSTT",
-    "type": "research",
-    "active": true,
-    "knowledge_base": true
-  }
+  "forgotten_events": 8472,
+  "retained_lessons": 41
 }
 
-capabilities — what is available, why, and from what source.
+forgotten_events: 8472, retained_lessons: 41
+This is not a loss ratio.
+This is a compression ratio.
 
-Json
-"capabilities": {
-  "notifications": { "available": true, "source": "android_system" },
-  "tasker": { "available": true, "source": "android_automation" },
-  "home_assistant": { "available": false, "reason": "not_configured" },
-  "sandbox": { "available": true, "source": "local_filesystem" },
-  "research_trace": { "available": true, "source": "project_context" }
-}
+8472 events → 41 principles
 
-communication — how this runtime prefers to be reached.
+Wisdom Density = 41 / 8472
 
-Json
-"communication": {
-  "channels": { "http": true, "mcp": false, "websocket": false },
-  "preferred_channel": "http",
-  "latency_class": "interactive"
-}
+Not a percentage.
+A measure of how much experience was required for a single timeless principle to emerge.
+To my knowledge, existing runtime systems focus on performance, reliability, or memory. 
+Wisdom Density instead measures the distillation of experience into enduring principles.
 
-authority — what this runtime is trusted to do, and what it cannot.
+---
 
-Json
-"authority": {
-  "trust_level": "local",
-  "effective_role": "personal-edge-agent",
-  "boundaries": {
-    "tool_scope": ["file_read", "shell_exec", "sandbox_write"],
-    "forbidden": ["rm_rf", "network_exposure"],
-    "idempotency_required": false
-  },
-  "contract_limits": {
-    "max_duration_ms": 180000,
-    "max_depth": 20,
-    "requires_approval": true
-  }
-}
+## Wisdom-Guided Research
 
-reasoning — how this runtime thinks, not just what it executes.
+The Wisdom Layer does not only look forward.
+It looks back.
+After a principle has been distilled, the Wisdom Layer asks:
+"Is there anything in the existing trace that should be reinterpreted in light of this new principle?"
+The Trace is not linear.
+Because of Wisdom, the past can be rewritten — not as events, but in meaning.
+This is a significant distinction.
+In the FIRSTT research project, this might look like:
 
+Existing trace:
+EXP-BIFILAR-001 → B²≈0, E_long≈1.08
 
-Json
-"reasoning": {
-  "trace_based": true,
-  "policy_layer": true,
-  "working_worlds": true,
-  "reflection": false,
-  "supports_research": true
-}
+Wisdom principle formed later:
+"Harmonic spectrum is more informative than amplitude alone."
 
-health — the current state of this runtime.
+Wisdom-guided reinterpretation:
+"We measured amplitude. We never analyzed the harmonic structure.
+ The same experiment contains an unanswered question."
 
+New direction:
+FFT analysis of EXP-BIFILAR-001 data as next step.
 
-Json
-"health": {
-  "uptime": "4h 23m",
-  "score": 87,
-  "provider_status": {
-    "ollama_cloud": "active",
-    "gemini": "standby"
-  }
-}
+The experiment does not change.
+The question does.
 
-Emergent Roles
-Arcsi was never designed with predefined roles.
-The distinction between Edge Runtime and Core Runtime appeared naturally during everyday use.
-The Android instance gradually became responsible for:
-notifications
-Tasker automation
-personal interaction
-rapid experimentation
-The Proxmox instance naturally evolved toward:
-Home Assistant
-MQTT
-qBittorrent
-infrastructure
-long-running services
-Same runtime.
-Different specialization.
-The environment itself shaped the role.
-A Runtime Does Not Use a World
-A runtime does not "use" a Working World.
-It lives in one.
-Therefore, the Passport does not merely state "who I am" — it also states "which world I belong to."
-The world field is not a pointer to a data structure.
-It is a declaration of belonging.
-The Reasoning Layer
-Every capability protocol describes what a runtime can execute.
-Runtime Passport adds something new: a description of how a runtime thinks.
-The reasoning block is not about tools.
-It is about cognition.
-A runtime that supports trace_based reasoning records its own thinking.
-A runtime with a policy_layer does not just execute — it decides.
-A runtime with working_worlds does not just process requests — it operates within a context.
-This is the difference between a remote executor and a participant.
-A Shared Insight
-This vision did not emerge in isolation.
-An external perspective from the Better Agent project highlighted the importance of capability discovery for distributed execution.
-Looking from the outside suggested an integration protocol.
-Looking from the inside revealed something deeper:
-Capability manifests are not only about interoperability.
-They are also about identity.
-Issuance
-The Runtime Passport is not issued by a central authority.
-It is earned through interaction with the environment.
-Every Arcsi instance writes its own passport by living in its world.
+---
 
+## The Evolution of Identity
 
-A Runtime Passport is not written before deployment.
-It is written by the runtime itself, through everyday operation.
+The Runtime Passport currently answers: "Who am I?"
+With the Wisdom Layer, it will eventually answer four questions:
+
+V4:  Who am I?
+V5:  Who have I become?
+V6:  What have I learned?
+V7:  What should I never forget?
+
+Age is not uptime.
+Age is accumulated experience transformed into principle.
+
+---
+
+## A Final Thought
+
+Memory accumulates.
+Wisdom condenses.
+Knowledge tells a runtime what it knows.
+Wisdom tells a runtime what it should never forget.
+---
