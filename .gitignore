@@ -21,7 +21,6 @@ projects/my_projects/*/versions/
 projects/my_projects/*/work_log.json
 
 # Sandbox
-sandbox/
 
 # Backup files
 *.bak
