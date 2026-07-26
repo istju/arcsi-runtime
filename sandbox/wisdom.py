@@ -80,61 +80,61 @@ def show_wisdom(project_name):
     """Display current wisdom state."""
     wisdom = load_wisdom(project_name)
     if not wisdom:
-        print("❌ Nincs wisdom réteg")
+        print("❌ Nincs wisdom reteg")
         return
 
     print(f"\n📚 WISDOM LAYER — {project_name}")
     print(f"{'='*50}")
 
-    for category, principles in wisdom['principles'].items():
-        if principles:
-            print(f"\n🔹 {category.upper()} PRINCIPLES:")
-            for p in principles:
-                print(f"  [{p['id']}] {p['principle']}")
-                if p.get('source_trace'):
-                    print(f"         ← distilled from: {p['source_trace']}")
+    status_icons = {
+        'candidate': '🔵',
+        'accepted': '🟢',
+        'validated': '⭐',
+        'core_principle': '💎',
+        'obsolete': '⚫'
+    }
 
-    age = wisdom['age']
-    print(f"\n📊 WISDOM DENSITY:")
-    print(f"  Research traces: {wisdom['retained_lessons']} retained / {wisdom.get('forgotten_events',0) + wisdom['retained_lessons']} total")
+    for category, principles in wisdom['principles'].items():
+        if not principles:
+            continue
+        print(f"\n🔹 {category.upper()} PRINCIPLES:")
+        for p in principles:
+            icon = status_icons.get(p.get('status', ''), '⚪')
+            conf = p.get('confidence', 0)
+            print(f"  {icon} [{p['id']}] {p['principle']}")
+            if p.get('source_trace'):
+                print(f"         ← distilled from: {p['source_trace']}")
+            print(f"         confidence: {conf:.2f} | status: {p.get('status','?')} | reuse: {p.get('reuse_count',0)}")
+            if p.get('falsification_verdict'):
+                print(f"         verdict: {p['falsification_verdict'][:80]}...")
+
     total = wisdom.get('forgotten_events', 0) + wisdom['retained_lessons']
+    print(f"\n📊 WISDOM DENSITY:")
+    print(f"  Research traces: {wisdom['retained_lessons']} retained / {total} total")
     if wisdom['retained_lessons'] > 0 and total > 0:
-        # Wisdom Density - pillanatnyi arany
         density = wisdom['retained_lessons'] / total
         print(f"\n  📐 Wisdom Density: {density:.4f}")
         print(f"     {wisdom['retained_lessons']} principles / {total} total traces")
         print(f"     Avg: {total // max(1, wisdom['retained_lessons'])} traces per principle")
 
-        # Wisdom Maturity - sulyozott score
         all_principles = [p for cat in wisdom['principles'].values() for p in cat]
         if all_principles:
             import datetime
             now = datetime.datetime.now()
-            maturity_scores = []
+            scores = []
             for p in all_principles:
                 score = 0
-                # Kor (napokban)
                 try:
                     age_days = (now - datetime.datetime.fromisoformat(p.get('created_at', '2026-01-01'))).days
-                    score += min(age_days / 30, 10)  # max 10 pont 300 nap utan
+                    score += min(age_days / 30, 10)
                 except: pass
-                # Reuse
                 score += p.get('reuse_count', 0) * 2
-                # Human confirmed
                 score += 5 if p.get('human_confirmed') else 0
-                # Reinterpretation
                 score += p.get('reinterpretation_count', 0) * 3
-                maturity_scores.append(score)
-
-            avg_maturity = sum(maturity_scores) / len(maturity_scores)
-            if avg_maturity < 5:
-                maturity_label = "🌱 Early"
-            elif avg_maturity < 15:
-                maturity_label = "🌿 Growing"
-            else:
-                maturity_label = "🌳 Mature"
-
-            print(f"\n  🧭 Wisdom Maturity: {avg_maturity:.2f} — {maturity_label}")
+                scores.append(score)
+            avg = sum(scores) / len(scores)
+            label = '🌱 Early' if avg < 5 else ('🌿 Growing' if avg < 15 else '🌳 Mature')
+            print(f"\n  🧭 Wisdom Maturity: {avg:.2f} — {label}")
             print(f"     (age + reuse + human_confirmed + reinterpretation)")
 
 
@@ -321,7 +321,10 @@ Respond in JSON:
                     "counter_examples": counter_examples,
                     "conflicts": [],
                     "falsification_attempts": 1,
-                    "falsification_failed": 0 if falsified else 1
+                    "falsification_failed": 0 if falsified else 1,
+                    "confidence": falsify_result.get('confidence', 0.4) if 'falsify_result' in dir() else 0.4,
+                    "falsification_verdict": falsify_result.get('verdict', None) if 'falsify_result' in dir() else None,
+                    "evidence": []
                 }
 
                 if cat not in wisdom['principles']:
