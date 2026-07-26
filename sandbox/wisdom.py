@@ -138,6 +138,30 @@ def show_wisdom(project_name):
             print(f"     (age + reuse + human_confirmed + reinterpretation)")
 
 
+def change_status(project_name, principle_id, new_status):
+    """Change the lifecycle status of a principle."""
+    import datetime
+    wisdom = load_wisdom(project_name)
+    if not wisdom:
+        print(f"❌ Wisdom fájl nem található: {project_name}")
+        return
+
+    for category, principles in wisdom['principles'].items():
+        for p in principles:
+            if p['id'] == principle_id:
+                old_status = p.get('status', 'unknown')
+                p['status'] = new_status
+                if new_status == 'validated':
+                    p['validated_at'] = datetime.datetime.now().isoformat()
+                    p['confidence'] = min(1.0, p.get('confidence', 0.7) + 0.2)
+                print(f"✅ [{principle_id}] {old_status} → {new_status}")
+                if new_status == 'validated':
+                    print(f"   confidence: {p['confidence']:.2f}")
+                save_wisdom(project_name, wisdom)
+                return
+
+    print(f"❌ Elv nem található: {principle_id}")
+
 def reflection_agent(project_name, last_n=10):
     """Reflection Agent - candidate principles javaslata trace alapján."""
     import subprocess
@@ -350,6 +374,9 @@ if __name__ == '__main__':
         print("  python3 wisdom.py show <projekt>")
         print("  python3 wisdom.py add <projekt> <kategória> <elv>")
         print("  python3 wisdom.py distill <projekt> <trace_id> <kategória> <elv>")
+        print("  python3 wisdom.py reflect <projekt> [n=10]")
+        print("  python3 wisdom.py validate <projekt> <principle_id>")
+        print("  python3 wisdom.py obsolete <projekt> <principle_id>")
         sys.exit(1)
 
     cmd = sys.argv[1]
@@ -366,6 +393,12 @@ if __name__ == '__main__':
     elif cmd == 'reflect' and len(sys.argv) >= 3:
         n = int(sys.argv[4]) if len(sys.argv) >= 5 else 10
         reflection_agent(sys.argv[2], last_n=n)
+
+    elif cmd == 'validate' and len(sys.argv) >= 4:
+        change_status(sys.argv[2], sys.argv[3], 'validated')
+
+    elif cmd == 'obsolete' and len(sys.argv) >= 4:
+        change_status(sys.argv[2], sys.argv[3], 'obsolete')
 
     else:
         print("❌ Ismeretlen parancs")
