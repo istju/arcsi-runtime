@@ -206,7 +206,7 @@ Respond with ONLY a JSON array:
             }
         )
 
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:
             data = json2.loads(resp.read())
             text = data.get('message', {}).get('content', '')
 
@@ -227,13 +227,110 @@ Respond with ONLY a JSON array:
 
             if choice.isdigit() and 1 <= int(choice) <= len(candidates):
                 selected = candidates[int(choice)-1]
-                add_principle(
-                    project_name,
-                    selected.get('category', 'research'),
-                    selected.get('principle'),
-                    source_trace=selected.get('source_trace')
-                )
-                print("✅ Principle approved and added to Wisdom Layer!")
+                candidate_principle = selected.get('principle')
+
+                # Try to falsify
+                print(f"\n🔬 Falsification attempt: trying to find counter-examples...")
+                falsify_prompt = f"""You are a scientific falsification agent.
+
+Try to find counter-examples or contradictions to this principle from the research traces below.
+Be critical and rigorous.
+
+Principle to test: {candidate_principle}
+
+Research traces:
+{trace_summary}
+
+Respond in JSON:
+{{
+  "falsified": true|false,
+  "counter_examples": ["trace_id: reason", ...],
+  "confidence": 0.0-1.0,
+  "verdict": "short explanation"
+}}"""
+
+                try:
+                    payload2_obj = {
+                        "model": "nemotron-3-ultra",
+                        "messages": [{"role": "user", "content": falsify_prompt}],
+                        "stream": False
+                    }
+                    payload2 = json2.dumps(payload2_obj).encode()
+
+                    req2_headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + os.environ.get('OLLAMA_API_KEY', '')
+                    }
+                    req2 = urllib.request.Request(
+                        'https://ollama.com/api/chat',
+                        data=payload2,
+                        headers=req2_headers
+                    )
+
+                    with urllib.request.urlopen(req2, timeout=120) as resp2:
+                        data2 = json2.loads(resp2.read())
+                        text2 = data2.get('message', {}).get('content', '')
+
+                    start2 = text2.find('{')
+                    end2 = text2.rfind('}') + 1
+                    if start2 != -1 and end2 > start2:
+                        falsify_result = json2.loads(text2[start2:end2])
+                        falsified = falsify_result.get('falsified', False)
+                        counter_examples = falsify_result.get('counter_examples', [])
+                        confidence = falsify_result.get('confidence', 0)
+                        verdict = falsify_result.get('verdict', '')
+
+                        print(f"  Verdict: {verdict}")
+                        print(f"  Confidence: {confidence:.2f}")
+                        if counter_examples:
+                            print(f"  Counter-examples found: {len(counter_examples)}")
+                            for ce in counter_examples:
+                                print(f"    - {ce}")
+
+                        if falsified:
+                            print(f"\n⚠️  Principle FALSIFIED — adding as candidate with counter-examples")
+                            status = 'candidate'
+                        else:
+                            print(f"\n✅ No counter-examples found — principle survives falsification")
+                            status = 'accepted'
+                    else:
+                        status = 'candidate'
+                        counter_examples = []
+                        falsified = False
+
+                except Exception as e:
+                    print(f"⚠️ Falsification error: {e}")
+                    status = 'candidate'
+                    counter_examples = []
+                    falsified = False
+
+                # Add principle with lifecycle status
+                wisdom = load_wisdom(project_name)
+                cat = selected.get('category', 'research')
+                entry = {
+                    "id": f"WP-{cat.upper()[:3]}-{len(wisdom['principles'].get(cat, []))+1:03d}",
+                    "principle": candidate_principle,
+                    "created_at": datetime.datetime.now().isoformat(),
+                    "last_referenced": None,
+                    "reuse_count": 0,
+                    "human_confirmed": True,
+                    "reinterpretation_count": 0,
+                    "source_trace": selected.get('source_trace'),
+                    "status": status,
+                    "validated_at": None,
+                    "counter_examples": counter_examples,
+                    "conflicts": [],
+                    "falsification_attempts": 1,
+                    "falsification_failed": 0 if falsified else 1
+                }
+
+                if cat not in wisdom['principles']:
+                    wisdom['principles'][cat] = []
+                wisdom['principles'][cat].append(entry)
+                wisdom['age']['wisdom_principles'] += 1
+                wisdom['retained_lessons'] += 1
+                save_wisdom(project_name, wisdom)
+                print(f"\n✅ [{entry['id']}] Added with status: {status}")
             else:
                 print("⏭️ Skipped.")
         else:
