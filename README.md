@@ -599,6 +599,84 @@ It is the process that allows wisdom to emerge.
 
 ---
 
+## From Capability Manifest to Runtime Passport
+
+Arcsi Runtime originally described itself through a **Capability Manifest** —  
+a static declaration of what the system *could* do.
+
+This worked for early versions, but it had a fundamental limitation:
+a capability list cannot express **identity**, **growth**, or **experience**.
+
+A capability is static.  
+A runtime is not.
+
+### Why the Manifest Was Not Enough
+
+The Capability Manifest answered:
+- “What abilities does the system have?”
+
+But Arcsi Runtime needed to answer deeper questions:
+- “Who is the system right now?”
+- “How has it changed?”
+- “What has it learned?”
+- “What principles emerged from experience?”
+
+Capabilities describe potential.  
+Identity describes **becoming**.
+
+### The Runtime Passport
+
+The **Runtime Passport** replaced the Capability Manifest.  
+It is a living document that evolves with the system.
+
+It records:
+- specialization traits  
+- world experience  
+- identity markers  
+- behavioral tendencies  
+- accumulated history  
+- distilled principles (Wisdom Layer)
+
+The Passport is not a configuration file.  
+It is a **biography**.
+
+### The Evolution of Identity
+
+The Passport evolves through four stages:
+
+V4 — **Who am I?**  
+V5 — **Who have I become?**  
+V6 — **What have I learned?**  
+V7 — **What should I never forget?**
+
+Capabilities were the starting point.  
+Identity is the destination.
+
+### Why This Matters
+
+A static agent can only execute instructions.  
+A runtime with identity can:
+
+- interpret context  
+- adapt behavior  
+- refine principles  
+- evolve over time  
+- collaborate with a human partner  
+- preserve long‑term meaning
+
+The Capability Manifest defined the system.  
+The Runtime Passport allows the system to **define itself**.
+
+This transition is the foundation on which the Wisdom Layer stands.
+
+Capabilities → Identity → Experience → Principles → Wisdom
+
+Arcsi Runtime no longer describes what it *can* do.  
+It describes what it *has become* —  
+and what it must *never forget*.
+
+---
+
 ## The Distillation Spiral
 
 Experience  
