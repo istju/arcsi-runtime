@@ -563,6 +563,267 @@ It reflects Arcsi exactly as it exists at that moment.
 
 ---
 
+## Wisdom Layer — What Should Never Be Forgotten
+
+<p align="center">
+  <em>
+    "Arcsi Runtime is not a product.<br>
+    It is an experiment in building a system<br>
+    that learns what it is by living —<br>
+    and preserves who it is<br>
+    by distilling experience into wisdom."
+  </em>
+</p>
+
+## What the Wisdom Layer Is
+
+A stateless agent only remembers the current conversation.  
+Arcsi remembers the principles that survived many conversations.
+
+The Wisdom Layer is the first component in Arcsi Runtime that does not ask:
+"**What happened?**"
+
+It asks:
+"**What should never be forgotten — even when everything else fades?**"
+
+Trace records events.  
+Context preserves state.  
+Research Trace chronicles thinking.  
+Working Worlds maintain the environment.  
+Runtime Passport describes identity.
+
+The Wisdom Layer distills **timeless principles** from experience.
+
+Forgetting is not a failure.  
+It is the process that allows wisdom to emerge.
+
+---
+
+## The Distillation Spiral
+
+Experience  
+↓  
+Trace — what happened  
+↓  
+Reflection — what it means  
+↓  
+Distillation — what is the general principle  
+↓  
+Wisdom — what must never be forgotten  
+↓  
+Reinterpretation — the past seen with new eyes  
+↓  
+New Question  
+↓  
+Experiment  
+↓  
+Experience
+
+This is not a pipeline.  
+It is a spiral — each cycle returns at a higher level.
+
+Distillation decides what dissolves and what remains.
+
+---
+
+## Lessons vs. Principles
+
+A **lesson** comes from a specific event.  
+A **principle** is universal.
+
+Example:
+
+Trace:  
+ESP32 WiFi dropout → gate unavailable → false alarm sent.
+
+Reflection:  
+Missing payload verification caused an incorrect notification.
+
+Distillation:  
+This is not an ESP32 problem. This is a verification problem.
+
+Wisdom Principle:  
+**Never notify before verifying infrastructure state.**
+
+The principle is independent of ESP32, WiFi, or gates.  
+It applies to all future automation decisions.
+
+---
+
+## Four Categories of Wisdom
+
+Wisdom  
+├── Runtime Principles — how the system should behave  
+├── Research Principles — how to conduct research inside a Working World  
+├── Collaboration Principles — how to work with other runtimes and supervisors  
+└── Personal Principles — what the human collaborator consistently stands by
+
+Personal Principles are unique:  
+A runtime that knows its collaborator’s principles does not just execute requests —  
+it understands the context in which those requests are made.
+
+---
+
+## Reflection Agent & Falsification Agent
+
+The Wisdom Layer does not wait for a human to notice patterns.  
+Two agents work in sequence:
+
+**Reflection Agent** analyzes recent trace entries and proposes candidate principles.  
+**Falsification Agent** immediately tries to disprove each proposal — searching for counter‑examples within the existing trace.
+
+Trace  
+↓  
+Reflection Agent (AI proposes)  
+↓  
+Candidate Principle  
+↓  
+Falsification Agent (AI tries to disprove)  
+↓  
+Counter‑example Search  
+↓  
+Confidence Score + Verdict  
+↓  
+Human Approval  
+↓  
+Wisdom
+
+The AI proposes.  
+The AI tries to disprove its own proposal.  
+The human approves only what survives.
+
+A principle that survives falsification gains a higher confidence score and advances to **accepted** status.  
+A principle confirmed by repeated use and human validation advances to **validated**.  
+Human authority is the final gate — not because the AI cannot decide, but because wisdom, by definition, is too valuable to delegate entirely.
+
+Human authority remains the final gate — not because the AI cannot decide,  
+but because wisdom is ultimately a question of **judgment**, not only inference.
+
+---
+
+## Wisdom Density
+
+```json
+"wisdom": {
+  "principles": [
+    "Never notify before verifying infrastructure state.",
+    "Never restart a long-running process without checking active contracts.",
+    "When in doubt, ask for approval before writing to the research trace."
+  ],
+  "age": {
+    "working_worlds": 18,
+    "completed_contracts": 3200,
+    "research_traces": 12000,
+    "policy_revisions": 470,
+    "architectural_shifts": 9,
+    "wisdom_principles": 41
+  },
+  "forgotten_events": 8472,
+  "retained_lessons": 41
+}
+```
+
+
+8472 events → 41 principles  
+Wisdom Density = 41 / 8472
+
+This is not a loss ratio.  
+It is a **compression ratio** —  
+a measure of how much experience was required for a single timeless principle to emerge.
+
+Existing runtime systems measure performance, reliability, or memory.  
+Wisdom Density measures **distilled experience**.
+
+---
+
+## Wisdom-Guided Research
+
+The Wisdom Layer does not only look forward — it looks back.
+
+After a principle is distilled, it asks:
+"Is there anything in the existing trace that should be reinterpreted in light of this new principle?"
+
+The past is not rewritten as events —  
+it is rewritten in **meaning**.
+
+Example (FIRSTT):
+
+Existing trace:  
+EXP-BIFILAR-001 → B²≈0, E_long≈1.08
+
+Later principle:  
+"Harmonic spectrum is more informative than amplitude alone."
+
+Reinterpretation:  
+"We measured amplitude. We never analyzed harmonic structure."
+
+New direction:  
+FFT analysis of EXP-BIFILAR-001.
+
+The experiment does not change.  
+The question does.
+
+---
+
+## Identity Evolution
+
+The Runtime Passport evolves:
+
+V4 — Who am I?  
+V5 — Who have I become?  
+V6 — What have I learned?  
+V7 — What should I never forget?
+
+Age is not uptime.  
+Age is accumulated experience transformed into principle.
+
+---
+
+## Wisdom Lifecycle
+
+Each principle has a lifecycle:
+
+🔵 candidate  
+🟢 accepted  
+⭐ validated (falsification passed)  
+💎 core principle  
+⚫ obsolete
+
+Each principle stores:
+
+- confidence score  
+- falsification verdict  
+- trace source  
+- lifecycle status  
+
+This is a Popper-style scientific method inside the runtime.
+
+---
+
+## Wisdom Maturity
+
+Wisdom Maturity measures how “old” the runtime is —  
+not in time, but in **experience**:
+
+- age  
+- reuse  
+- human_confirmed  
+- reinterpretation count  
+
+A single number expressing how deeply the runtime has been shaped by its past.
+
+---
+
+## Final Thought
+
+Memory accumulates.  
+Wisdom condenses.
+
+Knowledge tells a runtime what it knows.  
+Wisdom tells a runtime what it should never forget.
+
+---
+
 ## Support the Project
 
 If Arcsi Runtime helped you, inspired you, or saved you time, consider buying me a coffee.
