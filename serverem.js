@@ -1123,15 +1123,22 @@ const weekEntries = emailDigest.getWeekEntries(7);
     fullAiResponse = data?.choices?.[0]?.message?.content || data?.message?.content || data?.response || '';
 // Chat tool detektálás
 const cleanedResponse = fullAiResponse.replace(/^AI:\s*/m, '');
+debug(`[TOOL SCAN] response length: ${cleanedResponse.length}, contains {"tool": ${cleanedResponse.includes('{"tool"')}`);
 const toolJsonStart = cleanedResponse.indexOf('{"tool"');
+debug(`[TOOL SCAN] toolJsonStart: ${toolJsonStart}`);
 let toolMatch = null;
 if (toolJsonStart !== -1) {
   try {
     const candidate = cleanedResponse.slice(toolJsonStart);
-    let depth = 0, end = 0;
+    let depth = 0, end = 0, inString = false, escapeNext = false;
     for (let i = 0; i < candidate.length; i++) {
-      if (candidate[i] === '{') depth++;
-      else if (candidate[i] === '}') { depth--; if (depth === 0) { end = i+1; break; } }
+      const ch = candidate[i];
+      if (escapeNext) { escapeNext = false; continue; }
+      if (ch === '\\') { escapeNext = true; continue; }
+      if (ch === '"') { inString = !inString; continue; }
+      if (inString) continue;
+      if (ch === '{') depth++;
+      else if (ch === '}') { depth--; if (depth === 0) { end = i+1; break; } }
     }
     if (end > 0) toolMatch = [candidate.slice(0, end)];
   } catch(e) {}
