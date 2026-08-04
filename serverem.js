@@ -1122,35 +1122,122 @@ const weekEntries = emailDigest.getWeekEntries(7);
 
     fullAiResponse = data?.choices?.[0]?.message?.content || data?.message?.content || data?.response || '';
 // Chat tool detektálás
-const cleanedResponse = fullAiResponse.replace(/^AI:\s*/m, '');
-debug(`[TOOL SCAN] response length: ${cleanedResponse.length}, contains {"tool": ${cleanedResponse.includes('{"tool"')}`);
-const toolJsonStart = cleanedResponse.indexOf('{"tool"');
-debug(`[TOOL SCAN] toolJsonStart: ${toolJsonStart}`);
-let toolMatch = null;
-if (toolJsonStart !== -1) {
-  try {
-    const candidate = cleanedResponse.slice(toolJsonStart);
-    let depth = 0, end = 0, inString = false, escapeNext = false;
-    for (let i = 0; i < candidate.length; i++) {
-      const ch = candidate[i];
-      if (escapeNext) { escapeNext = false; continue; }
-      if (ch === '\\') { escapeNext = true; continue; }
-      if (ch === '"') { inString = !inString; continue; }
-      if (inString) continue;
-      if (ch === '{') depth++;
-      else if (ch === '}') { depth--; if (depth === 0) { end = i+1; break; } }
+function extractToolCall(response) {
+    if (!response) return null;
+
+    // "AI:" prefix eltávolítása
+    let text = response.replace(/^AI:\s*/m, "");
+
+    // Markdown code fence eltávolítása csak a blokk elejéről/végéről
+    text = text
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/, "");
+
+    // BOM és vezérlőkarakterek eltávolítása az elejéről
+    text = text.replace(/^\uFEFF/, '');
+
+    //
+    // 1) JSON objektum kezdete: első '{'
+    //
+    const firstBrace = text.indexOf("{");
+    if (firstBrace === -1) return null;
+
+    //
+    // 2) "tool" kulcs keresése az első '{' után
+    //
+    const toolPos = text.indexOf('"tool"', firstBrace);
+    if (toolPos === -1) return null;
+
+    //
+    // 3) Visszaugrás a "tool"-t tartalmazó objektum valódi kezdő '{' pozíciójára
+    //
+    const start = text.lastIndexOf("{", toolPos);
+    if (start === -1) return null;
+
+    //
+    // 4) JSON kivágása a start pozíciótól
+    //
+    const json = text.slice(start);
+
+    let depth = 0;
+    let inString = false;
+    let escapeNext = false;
+
+    for (let i = 0; i < json.length; i++) {
+        const ch = json[i];
+
+        // Escape kezelése
+        if (escapeNext) {
+            escapeNext = false;
+            continue;
+        }
+        if (ch === "\\") {
+            escapeNext = true;
+            continue;
+        }
+
+        // String állapot
+        if (ch === '"') {
+            inString = !inString;
+            continue;
+        }
+
+        if (inString) continue;
+
+        // Depth számolás
+        if (ch === "{") depth++;
+
+        if (ch === "}") {
+            depth--;
+
+            // Ha depth visszaért 0-ra → teljes JSON objektum
+            if (depth === 0) {
+                const candidate = json.slice(0, i + 1);
+
+                try {
+                    const parsed = JSON.parse(candidate);
+
+                    if (
+                        typeof parsed === "object" &&
+                        parsed &&
+                        typeof parsed.tool === "string"
+                    ) {
+                        return {
+                            json: parsed,
+                            toolName: parsed.tool,
+                            raw: candidate,
+                            start,
+                            end: start + i + 1,
+                            before: text.slice(0, start),
+                            after: text.slice(start + i + 1)
+                        };
+                    }
+
+                } catch (e) {
+                    debug(`[TOOL PARSER] JSON parse error: ${e.message}`);
+                    return null;
+                }
+            }
+        }
     }
-    if (end > 0) toolMatch = [candidate.slice(0, end)];
-  } catch(e) {}
+
+    debug("[TOOL PARSER] No complete JSON object found.");
+    return null;
 }
-if (toolMatch) {
+
+const toolResult = extractToolCall(fullAiResponse);
+debug(`[TOOL SCAN] response length: ${fullAiResponse.length}, tool found: ${!!toolResult}`);
+
+if (toolResult) {
   try {
-    const toolCall = JSON.parse(toolMatch[0]);
-    info(`[TOOL DEBUG] tool: ${toolCall.tool} | content length: ${(toolCall.input?.content || '').length}`);
-    const toolFn = toolRegistry.get(toolCall.tool);
+    const toolCall = toolResult.json;
+    info(`[TOOL DEBUG] tool: ${toolResult.toolName} | content length: ${(toolCall.input?.content || '').length}`);
+    const toolFn = toolRegistry.get(toolResult.toolName);
     if (toolFn) {
       const result = await toolFn(toolCall.input || {});
-      fullAiResponse = `✅ Tool végrehajtva: ${toolCall.tool}\n${JSON.stringify(result, null, 2)}`;
+      fullAiResponse = `✅ Tool végrehajtva: ${toolResult.toolName}\n${JSON.stringify(result, null, 2)}`;
+    } else {
+      fullAiResponse = `⚠️ Ismeretlen tool: ${toolResult.toolName}`;
     }
   } catch(e) {
     fullAiResponse = `⚠️ Tool hiba: ${e.message}`;
@@ -1165,7 +1252,6 @@ res.write(fullAiResponse);
 
     history.push({ role: 'assistant', content: fullAiResponse });
     logToFile(sessionId, prompt, fullAiResponse, providerUsed.name);
-
     // Runtime event log – válasz
     await runtimeClient.logEvent('chat_response', {
       sessionId,
