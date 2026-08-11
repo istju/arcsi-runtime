@@ -9,7 +9,7 @@ import os
 import datetime
 import sys
 
-PROJECTS_ROOT = '/data/data/com.termux/files/home/ai-chat-pro-v2/agent_work/work/projects/my_projects'
+PROJECTS_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'projects', 'my_projects')
 
 def get_wisdom_path(project_name):
     return os.path.join(PROJECTS_ROOT, project_name, 'wisdom.json')
@@ -26,23 +26,61 @@ def save_wisdom(project_name, wisdom):
     with open(path, 'w') as f:
         json.dump(wisdom, f, indent=2, ensure_ascii=False)
 
-def add_principle(project_name, category, principle, source_trace=None):
-    """Add a distilled principle to the wisdom layer."""
+def get_default_scope(project_name):
+    """Default scope for a Working World, derived from the active project name and
+    runtime environment. Constraints start empty by design - add project-specific
+    constraints via the `scope` parameter of add_principle(), or extend this
+    function for your own project as needed."""
+    import platform
+    return {
+        "world": project_name,
+        "environment": platform.system().lower(),
+        "constraints": [],
+        "validity": {
+            "from_runtime_version": "5.0",
+            "until": None
+        }
+    }
+
+def add_principle(project_name, category, principle, source_trace=None, tags=None,
+                   created_by="human", scope=None, source_type="trace"):
+    """Add a distilled principle to the wisdom layer (V5 schema)."""
     wisdom = load_wisdom(project_name)
     if not wisdom:
         print(f"❌ Wisdom fájl nem található: {project_name}")
         return
 
+    if category not in wisdom['principles']:
+        wisdom['principles'][category] = []
+        print(f"ℹ️ Új kategória létrehozva: '{category}'")
+
+    evidence = [source_trace] if source_trace else []
+
     entry = {
         "id": f"WP-{category.upper()[:3]}-{len(wisdom['principles'][category])+1:03d}",
+        "category": category,
         "principle": principle,
+        "version": "1.0",
+        "supersedes": [],
+        "tags": tags or [],
+        "scope": scope or get_default_scope(project_name),
+        "evidence": evidence,
+        "source_type": source_type,
+        "provenance": {
+            "created_by": created_by,
+            "approved_by": "human",
+            "derived_from": evidence
+        },
         "created_at": datetime.datetime.now().isoformat(),
         "last_referenced": None,
         "reuse_count": 0,
         "human_confirmed": True,
         "reinterpretation_count": 0,
-        "source_trace": source_trace,
-        "status": "active"
+        "status": "candidate",
+        "confidence": 0.5,
+        "falsification_verdict": None,
+        "falsification_attempts": 0,
+        "survival_count": 0
     }
 
     wisdom['principles'][category].append(entry)
@@ -101,10 +139,20 @@ def show_wisdom(project_name):
         for p in principles:
             icon = status_icons.get(p.get('status', ''), '⚪')
             conf = p.get('confidence', 0)
-            print(f"  {icon} [{p['id']}] {p['principle']}")
+            version = p.get('version', '1.0')
+            print(f"  {icon} [{p['id']}] v{version} {p['principle']}")
             if p.get('source_trace'):
                 print(f"         ← distilled from: {p['source_trace']}")
-            print(f"         confidence: {conf:.2f} | status: {p.get('status','?')} | reuse: {p.get('reuse_count',0)}")
+            print(f"         confidence: {conf:.2f} | status: {p.get('status','?')} | reuse: {p.get('reuse_count',0)} | survived: {p.get('survival_count',0)}")
+            scope = p.get('scope')
+            if scope:
+                constraints = ', '.join(scope.get('constraints', [])) or 'none'
+                print(f"         scope: {scope.get('world','?')} ({scope.get('environment','?')}) | constraints: {constraints}")
+            tags = p.get('tags')
+            if tags:
+                print(f"         tags: {', '.join(tags)}")
+            if p.get('supersedes'):
+                print(f"         supersedes: {', '.join(p['supersedes'])}")
             if p.get('falsification_verdict'):
                 print(f"         verdict: {p['falsification_verdict'][:80]}...")
 
@@ -136,6 +184,83 @@ def show_wisdom(project_name):
             label = '🌱 Early' if avg < 5 else ('🌿 Growing' if avg < 15 else '🌳 Mature')
             print(f"\n  🧭 Wisdom Maturity: {avg:.2f} — {label}")
             print(f"     (age + reuse + human_confirmed + reinterpretation)")
+
+
+
+def falsify_principle(project_name, principle_id):
+    """Falsify a single principle by ID (standalone, scientific rigor)."""
+    import urllib.request
+    import json as json2
+
+    wisdom = load_wisdom(project_name)
+    if not wisdom:
+        print(f"❌ Wisdom nem talalhato: {project_name}")
+        return
+
+    target = None
+    for cat, principles in wisdom['principles'].items():
+        for p in principles:
+            if p['id'] == principle_id:
+                target = p
+                break
+
+    if not target:
+        print(f"❌ Elv nem talalhato: {principle_id}")
+        return
+
+    principle_text = target['principle']
+    print(f"🔬 Falsification: {principle_id}")
+    print(f"   {principle_text}\n")
+
+    prompt = f"""You are a scientific falsification agent.
+Try to find counter-examples or reasons why this principle might be wrong, incomplete, or harmful.
+Be critical and rigorous.
+
+Principle: {principle_text}
+
+Respond ONLY in JSON:
+{{"falsified": false, "confidence": 0.0, "verdict": "short explanation"}}"""
+
+    try:
+        payload = json2.dumps({
+            "model": "nemotron-3-ultra",
+            "messages": [{"role": "user", "content": prompt}],
+            "stream": False
+        }).encode()
+
+        req = urllib.request.Request(
+            'https://ollama.com/api/chat',
+            data=payload,
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + os.environ.get('OLLAMA_API_KEY', '')
+            }
+        )
+
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json2.loads(resp.read())
+            text = data.get('message', {}).get('content', '')
+
+        start = text.find('{')
+        end = text.rfind('}') + 1
+        result = json2.loads(text[start:end]) if start != -1 else {'falsified': False, 'confidence': 0.5, 'verdict': 'parse error'}
+
+        print(f"Verdict   : {result.get('verdict')}")
+        print(f"Confidence: {result.get('confidence')}")
+        print(f"Falsified : {result.get('falsified')}")
+
+        target['status'] = 'candidate' if result.get('falsified') else 'accepted'
+        target['confidence'] = result.get('confidence', 0.5)
+        target['falsification_verdict'] = result.get('verdict')
+        target['falsification_attempts'] = target.get('falsification_attempts', 0) + 1
+        if not result.get('falsified'):
+            target['survival_count'] = target.get('survival_count', 0) + 1
+
+        save_wisdom(project_name, wisdom)
+        print(f"\n✅ {principle_id} → {target['status']}")
+
+    except Exception as e:
+        print(f"❌ Falsification hiba: {e}")
 
 
 def change_status(project_name, principle_id, new_status):
@@ -193,7 +318,7 @@ def reflection_agent(project_name, last_n=10):
     import urllib.request
     import urllib.error
 
-    prompt = f"""You are a Wisdom Distillation Agent for the FIRSTT research project.
+    prompt = f"""You are a Wisdom Distillation Agent for the {project_name} project.
 
 Analyze these recent research trace entries and suggest 2-3 candidate wisdom principles.
 A principle must be:
@@ -331,24 +456,38 @@ Respond in JSON:
                 # Add principle with lifecycle status
                 wisdom = load_wisdom(project_name)
                 cat = selected.get('category', 'research')
+                st_trace = selected.get('source_trace')
+                ev = [st_trace] if st_trace else []
                 entry = {
                     "id": f"WP-{cat.upper()[:3]}-{len(wisdom['principles'].get(cat, []))+1:03d}",
+                    "category": cat,
                     "principle": candidate_principle,
+                    "version": "1.0",
+                    "supersedes": [],
+                    "tags": [],
+                    "scope": get_default_scope(project_name),
+                    "evidence": ev,
+                    "source_type": "trace",
+                    "provenance": {
+                        "created_by": "reflection_agent",
+                        "approved_by": "human",
+                        "derived_from": ev
+                    },
                     "created_at": datetime.datetime.now().isoformat(),
                     "last_referenced": None,
                     "reuse_count": 0,
                     "human_confirmed": True,
                     "reinterpretation_count": 0,
-                    "source_trace": selected.get('source_trace'),
+                    "source_trace": st_trace,
                     "status": status,
                     "validated_at": None,
                     "counter_examples": counter_examples,
                     "conflicts": [],
                     "falsification_attempts": 1,
                     "falsification_failed": 0 if falsified else 1,
+                    "survival_count": 1 if not falsified else 0,
                     "confidence": falsify_result.get('confidence', 0.4) if 'falsify_result' in dir() else 0.4,
-                    "falsification_verdict": falsify_result.get('verdict', None) if 'falsify_result' in dir() else None,
-                    "evidence": []
+                    "falsification_verdict": falsify_result.get('verdict', None) if 'falsify_result' in dir() else None
                 }
 
                 if cat not in wisdom['principles']:
@@ -399,6 +538,9 @@ if __name__ == '__main__':
 
     elif cmd == 'obsolete' and len(sys.argv) >= 4:
         change_status(sys.argv[2], sys.argv[3], 'obsolete')
+
+    elif cmd == 'falsify' and len(sys.argv) >= 4:
+        falsify_principle(sys.argv[2], sys.argv[3])
 
     else:
         print("❌ Ismeretlen parancs")

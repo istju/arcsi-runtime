@@ -878,7 +878,29 @@ This is a Popper-style scientific method inside the runtime.
 
 ---
 
-## Wisdom Maturity
+## Using the Wisdom Layer
+
+Every project can have its own `wisdom.json`, storing distilled principles alongside its `context.json`.
+
+```bash
+# View current principles
+python3 sandbox/wisdom.py show PROJECT_NAME
+
+# Manually add a principle
+python3 sandbox/wisdom.py add PROJECT_NAME CATEGORY "Principle text"
+
+# Distill a principle from a specific trace entry
+python3 sandbox/wisdom.py distill PROJECT_NAME TRACE_ID "Principle text" CATEGORY
+
+# Let the Reflection Agent propose candidates from recent traces
+OLLAMA_API_KEY=your_key python3 sandbox/wisdom.py reflect PROJECT_NAME 10
+
+# Falsify an existing principle
+OLLAMA_API_KEY=your_key python3 sandbox/wisdom.py falsify PROJECT_NAME WP_ID
+
+# Change lifecycle status
+python3 sandbox/wisdom.py validate PROJECT_NAME WP_ID
+python3 sandbox/wisdom.py obsolete PROJECT_NAME WP_ID
 
 Wisdom Maturity measures how “old” the runtime is —  
 not in time, but in **experience**:
